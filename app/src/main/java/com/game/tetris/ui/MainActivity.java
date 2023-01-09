@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -46,6 +47,7 @@ public class MainActivity extends BaseActivity implements MainVu {
     }
 
     private void initView() {
+
         gameView = findViewById(R.id.game_view);
         rootView = findViewById(R.id.root);
         gameView.post(new Runnable() {
@@ -54,6 +56,8 @@ public class MainActivity extends BaseActivity implements MainVu {
                 presenter.onCreateGameView();
             }
         });
+
+        TextView tvTurn = findViewById(R.id.game_button);
         ImageView ivLeft = findViewById(R.id.iv_left);
         ImageView ivRight = findViewById(R.id.iv_right);
         ivLeft.setOnClickListener(new View.OnClickListener() {
@@ -66,6 +70,12 @@ public class MainActivity extends BaseActivity implements MainVu {
             @Override
             public void onClick(View view) {
                 presenter.onRightButtonClickListener();
+            }
+        });
+        tvTurn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                presenter.onTurnCubeButtonClickListener();
             }
         });
     }
@@ -110,6 +120,11 @@ public class MainActivity extends BaseActivity implements MainVu {
     @Override
     public void showGameOver() {
         Toast.makeText(this,"GameOver",Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public ConstraintLayout getRootView() {
+        return rootView;
     }
 
 }

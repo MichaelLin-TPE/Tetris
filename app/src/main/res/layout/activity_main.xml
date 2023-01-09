@@ -40,4 +40,16 @@
         android:layout_width="50dp"
         android:layout_height="50dp"/>
 
+    <TextView
+        android:id="@+id/game_button"
+        android:gravity="center"
+        android:text="TURN"
+        android:textColor="@color/white"
+        android:background="@drawable/game_button_bg"
+        app:layout_constraintTop_toTopOf="@id/iv_right"
+        app:layout_constraintRight_toRightOf="@id/game_view"
+        app:layout_constraintBottom_toBottomOf="@id/iv_right"
+        android:layout_width="60dp"
+        android:layout_height="60dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

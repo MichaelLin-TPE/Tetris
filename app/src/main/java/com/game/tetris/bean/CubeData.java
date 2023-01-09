@@ -2,7 +2,7 @@ package com.game.tetris.bean;
 
 import android.view.View;
 
-public class CubeData {
+public class CubeData implements Comparable<CubeData>{
 
     private float x;
     private float y;
@@ -11,15 +11,24 @@ public class CubeData {
     private float width;
     private float height;
     private View cubeView;
+    private int cubeTurnWay;
 
-
-    public CubeData(float x, float y, int bg, int cubeType,float width,float height) {
+    public CubeData(float x, float y, int bg, int cubeType,float width,float height,int cubeTurnWay) {
         this.x = x;
         this.y = y;
         this.bg = bg;
         this.cubeType = cubeType;
         this.width = width;
         this.height = height;
+        this.cubeTurnWay = cubeTurnWay;
+    }
+
+    public int getCubeTurnWay() {
+        return cubeTurnWay;
+    }
+
+    public void setCubeTurnWay(int cubeTurnWay) {
+        this.cubeTurnWay = cubeTurnWay;
     }
 
     public View getCubeView() {
@@ -76,5 +85,11 @@ public class CubeData {
 
     public void setCubeType(int cubeType) {
         this.cubeType = cubeType;
+    }
+
+    @Override
+    public int compareTo(CubeData cubeData) {
+        float compareY = cubeData.getY();
+        return (int) (this.y - compareY);
     }
 }

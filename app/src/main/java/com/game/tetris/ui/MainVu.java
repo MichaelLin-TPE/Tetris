@@ -1,6 +1,9 @@
 package com.game.tetris.ui;
 
 import android.os.Handler;
+import android.view.View;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.game.tetris.bean.CubeData;
 import com.game.tetris.bean.LatticeData;
@@ -15,4 +18,6 @@ public interface MainVu {
     Handler getHandler();
 
     void showGameOver();
+
+    ConstraintLayout getRootView();
 }
