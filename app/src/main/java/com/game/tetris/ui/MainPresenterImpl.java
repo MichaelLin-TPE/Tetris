@@ -16,7 +16,6 @@ import com.game.tetris.R;
 import com.game.tetris.bean.CubeData;
 import com.game.tetris.bean.LatticeData;
 import com.game.tetris.tool.CubeTool;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -292,7 +291,6 @@ public class MainPresenterImpl implements MainPresenter {
 
     private void checkNeedToRemoveLines() {
         Collections.sort(cubeDataList);
-        printCubeLog();
         float y = 0;
         int removeCount = 0;
         ArrayList<CubeData> removeData = new ArrayList<>();
@@ -306,37 +304,63 @@ public class MainPresenterImpl implements MainPresenter {
 
             if (y == data.getY()){
                 removeCount ++;
-                Log.i("Michael","removeCount : "+removeCount);
                 removeData.add(data);
                 if (removeCount >= 9){
                     allRemoveData.add(removeData);
-                    Log.i("Michael","allRemoveData size : "+allRemoveData.size());
                 }
             }else {
                 removeCount = 0;
-                removeData.clear();
+                removeData = new ArrayList<>();
                 y = data.getY();
-                Log.i("Michael","removeCount : "+removeCount);
+                removeData.add(data);
             }
         }
-
-
+        boolean isNeedToMove = false;
+        ArrayList<Float> removedYList = new ArrayList<>();
+        float removeY = 0;
         for (ArrayList<CubeData> remove : allRemoveData){
             for (CubeData cubeData : remove){
                 Iterator<CubeData> iterator = cubeDataList.iterator();
                 while (iterator.hasNext()){
                     CubeData data = iterator.next();
                     if (data.getY() == cubeData.getY()){
+                        isNeedToMove = true;
                         mView.getRootView().removeView(data.getCubeView());
                         iterator.remove();
+                        if (removeY == 0){
+                            removeY = cubeData.getY();
+                            removedYList.add(removeY);
+                        }else if (removeY != cubeData.getY()){
+                            removeY = cubeData.getY();
+                            removedYList.add(removeY);
+                        }
+                        break;
                     }
                 }
             }
         }
+        if (isNeedToMove){
+            startToMoveAllCube(removedYList);
+        }else {
+            createCube();
+        }
 
-
-        createCube();
     }
+
+    private void startToMoveAllCube(ArrayList<Float> removedYList) {
+        for (Float y : removedYList){
+            for (CubeData cubeData : cubeDataList){
+                if (cubeData.getY() < y){
+                    cubeData.getCubeView().setY(cubeData.getY() + latticeHeight);
+                    cubeData.setY(cubeData.getY() + latticeHeight);
+                }
+            }
+        }
+        createCube();
+
+    }
+
+
 
     private boolean isTouchBottom() {
         boolean isReachBottom = false;
