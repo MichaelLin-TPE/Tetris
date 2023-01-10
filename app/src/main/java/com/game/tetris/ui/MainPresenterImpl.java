@@ -129,6 +129,11 @@ public class MainPresenterImpl implements MainPresenter {
 
     private void changeWayOfLongCube() {
         CubeData data = cubeTempList.get(1);
+
+        if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_WAY2 && isCanTurnWay(data)){
+            return;
+        }
+
         if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_WAY1) {
             cubeTempList.get(0).getCubeView().setY(data.getY() + latticeHeight);
             cubeTempList.get(0).getCubeView().setX(data.getX());
@@ -195,6 +200,25 @@ public class MainPresenterImpl implements MainPresenter {
             }
         }
 
+    }
+
+    private boolean isCanTurnWay(CubeData data) {
+        float firstX = data.getX() - latticeWidth;
+        float thirdX = data.getX() + latticeWidth;
+        float fourthX = data.getX() + latticeWidth * 2;
+        for (CubeData cubeData : cubeDataList){
+            if (firstX == cubeData.getX() && data.getY() == cubeData.getY()){
+                return true;
+            }
+            if (thirdX == cubeData.getX() && data.getY() == cubeData.getY()){
+                return true;
+            }
+            if (fourthX == cubeData.getX() && data.getY() == cubeData.getY()){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void createCube() {
