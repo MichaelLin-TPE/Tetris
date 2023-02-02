@@ -14,4 +14,6 @@ public interface MainPresenter {
     void onRightButtonClickListener();
 
     void onTurnCubeButtonClickListener();
+
+    void onDownButtonClickListener();
 }

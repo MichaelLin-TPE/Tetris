@@ -60,6 +60,13 @@ public class MainActivity extends BaseActivity implements MainVu {
         TextView tvTurn = findViewById(R.id.game_button);
         ImageView ivLeft = findViewById(R.id.iv_left);
         ImageView ivRight = findViewById(R.id.iv_right);
+        TextView tvDown = findViewById(R.id.down_button);
+        tvDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                presenter.onDownButtonClickListener();
+            }
+        });
         ivLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
