@@ -33,6 +33,8 @@ public class CubeTool {
     public static final int CUBE_TURN_L1_WAY3 = 999;
     public static final int CUBE_TURN_L1_WAY4 = 1000;
 
+    public static final int CUBE_TURN_Z1_WAY1 = 123;
+    public static final int CUBE_TURN_Z1_WAY2 = 456;
 
     public static ArrayList<CubeData> getLCubeData(int currentCubeType, ArrayList<LatticeData> latticeDataList, float latticeWidth, float latticeHeight) {
         ArrayList<CubeData> data = new ArrayList<>();
@@ -63,19 +65,19 @@ public class CubeTool {
 
     public static ArrayList<CubeData> getZCubeData(int currentCubeType, ArrayList<LatticeData> latticeDataList, float latticeWidth, float latticeHeight) {
         ArrayList<CubeData> data = new ArrayList<>();
-        data.add(new CubeData(latticeDataList.get(16).getX(), latticeDataList.get(16).getY(), R.drawable.cube_z_bg, currentCubeType, latticeWidth, latticeHeight, CUBE_TURN_LONG_WAY2));
-        data.add(new CubeData(latticeDataList.get(15).getX(), latticeDataList.get(15).getY(), R.drawable.cube_z_bg, currentCubeType, latticeWidth, latticeHeight, CUBE_TURN_LONG_WAY2));
-        data.add(new CubeData(latticeDataList.get(4).getX(), latticeDataList.get(4).getY(), R.drawable.cube_z_bg, currentCubeType, latticeWidth, latticeHeight, CUBE_TURN_LONG_WAY2));
-        data.add(new CubeData(latticeDataList.get(5).getX(), latticeDataList.get(5).getY(), R.drawable.cube_z_bg, currentCubeType, latticeWidth, latticeHeight, CUBE_TURN_LONG_WAY2));
+        data.add(new CubeData(latticeDataList.get(16).getX(), latticeDataList.get(16).getY(), R.drawable.cube_z_bg, currentCubeType, latticeWidth, latticeHeight, CUBE_TURN_Z1_WAY2));
+        data.add(new CubeData(latticeDataList.get(15).getX(), latticeDataList.get(15).getY(), R.drawable.cube_z_bg, currentCubeType, latticeWidth, latticeHeight, CUBE_TURN_Z1_WAY2));
+        data.add(new CubeData(latticeDataList.get(4).getX(), latticeDataList.get(4).getY(), R.drawable.cube_z_bg, currentCubeType, latticeWidth, latticeHeight, CUBE_TURN_Z1_WAY2));
+        data.add(new CubeData(latticeDataList.get(5).getX(), latticeDataList.get(5).getY(), R.drawable.cube_z_bg, currentCubeType, latticeWidth, latticeHeight, CUBE_TURN_Z1_WAY2));
         return data;
     }
 
     public static ArrayList<CubeData> getZ2CubeData(int currentCubeType, ArrayList<LatticeData> latticeDataList, float latticeWidth, float latticeHeight) {
         ArrayList<CubeData> data = new ArrayList<>();
-        data.add(new CubeData(latticeDataList.get(14).getX(), latticeDataList.get(14).getY(), R.drawable.cube_z2_bg, currentCubeType, latticeWidth, latticeHeight, CUBE_TURN_LONG_WAY2));
-        data.add(new CubeData(latticeDataList.get(15).getX(), latticeDataList.get(15).getY(), R.drawable.cube_z2_bg, currentCubeType, latticeWidth, latticeHeight, CUBE_TURN_LONG_WAY2));
-        data.add(new CubeData(latticeDataList.get(6).getX(), latticeDataList.get(6).getY(), R.drawable.cube_z2_bg, currentCubeType, latticeWidth, latticeHeight, CUBE_TURN_LONG_WAY2));
-        data.add(new CubeData(latticeDataList.get(5).getX(), latticeDataList.get(5).getY(), R.drawable.cube_z2_bg, currentCubeType, latticeWidth, latticeHeight, CUBE_TURN_LONG_WAY2));
+        data.add(new CubeData(latticeDataList.get(14).getX(), latticeDataList.get(14).getY(), R.drawable.cube_z2_bg, currentCubeType, latticeWidth, latticeHeight, CUBE_TURN_Z1_WAY1));
+        data.add(new CubeData(latticeDataList.get(15).getX(), latticeDataList.get(15).getY(), R.drawable.cube_z2_bg, currentCubeType, latticeWidth, latticeHeight, CUBE_TURN_Z1_WAY1));
+        data.add(new CubeData(latticeDataList.get(6).getX(), latticeDataList.get(6).getY(), R.drawable.cube_z2_bg, currentCubeType, latticeWidth, latticeHeight, CUBE_TURN_Z1_WAY1));
+        data.add(new CubeData(latticeDataList.get(5).getX(), latticeDataList.get(5).getY(), R.drawable.cube_z2_bg, currentCubeType, latticeWidth, latticeHeight, CUBE_TURN_Z1_WAY1));
         return data;
     }
 
@@ -231,6 +233,20 @@ public class CubeTool {
         } else if (cubeData.getCubeTurnWay() == CUBE_TURN_L1_WAY3) {
             if (index == 3) {
                 y = cubeY + latticeHeight * 2;
+            }
+        }
+        return y;
+    }
+
+    public static float getMainZ1Cube(float cubeY, CubeData cubeData, float latticeHeight, float latticeWidth, int index) {
+        float y = cubeY;
+        if (cubeData.getCubeTurnWay() == CUBE_TURN_Z1_WAY2) {
+            if (index == 0 || index == 1) {
+                y = cubeY - latticeHeight;
+            }
+        } else if (cubeData.getCubeTurnWay() == CUBE_TURN_Z1_WAY1) {
+            if (index == 2) {
+                y = cubeY - latticeHeight;
             }
         }
         return y;
@@ -450,6 +466,64 @@ public class CubeTool {
         cubeTempList.get(3).setY(data.getY() + latticeHeight * 3);
         cubeTempList.get(3).setX(data.getX());
         cubeTempList.get(3).setCubeTurnWay(CUBE_TURN_LONG_WAY2);
+
+    }
+
+    public static void getZ1CTurnWay2(CubeData data, ArrayList<CubeData> cubeTempList, float latticeHeight, float latticeWidth, ArrayList<CubeData> cubeDataList) {
+        //偵測若右邊方塊超出已經放置好的方塊來決定要移動幾格
+        int moveSpace = 0;
+        for (CubeData cubeData : cubeDataList) {
+            if (data.getY() + latticeHeight == cubeData.getY() && data.getX() + latticeWidth == cubeData.getX()){
+                moveSpace = -1;
+            }
+            if (data.getY() == cubeData.getY() && data.getX() - latticeWidth == cubeData.getX()){
+                moveSpace = 1;
+            }
+        }
+        float moveX = data.getX() + (latticeWidth * moveSpace);
+        data.setX(moveX);
+        data.getCubeView().setX(moveX);
+
+        cubeTempList.get(0).getCubeView().setY(data.getY());
+        cubeTempList.get(0).getCubeView().setX(data.getX() - latticeWidth);
+        cubeTempList.get(0).setY(data.getY());
+        cubeTempList.get(0).setX(data.getX() - latticeWidth);
+        cubeTempList.get(0).setCubeTurnWay(CUBE_TURN_Z1_WAY2);
+
+        cubeTempList.get(1).getCubeView().setY(data.getY() + latticeHeight);
+        cubeTempList.get(1).getCubeView().setX(data.getX());
+        cubeTempList.get(1).setY(data.getY() + latticeHeight);
+        cubeTempList.get(1).setX(data.getX());
+        cubeTempList.get(1).setCubeTurnWay(CUBE_TURN_Z1_WAY2);
+
+        cubeTempList.get(2).getCubeView().setY(data.getY() + latticeHeight);
+        cubeTempList.get(2).getCubeView().setX(data.getX() + latticeWidth);
+        cubeTempList.get(2).setY(data.getY() + latticeHeight);
+        cubeTempList.get(2).setX(data.getX() + latticeWidth);
+        cubeTempList.get(2).setCubeTurnWay(CUBE_TURN_Z1_WAY2);
+
+
+    }
+
+    public static void getZ1CTurnWay1(CubeData data, ArrayList<CubeData> cubeTempList, float latticeHeight, float latticeWidth, ArrayList<CubeData> cubeDataList) {
+
+        cubeTempList.get(0).getCubeView().setY(data.getY() - latticeHeight);
+        cubeTempList.get(0).getCubeView().setX(data.getX());
+        cubeTempList.get(0).setY(data.getY() - latticeHeight);
+        cubeTempList.get(0).setX(data.getX());
+        cubeTempList.get(0).setCubeTurnWay(CUBE_TURN_Z1_WAY1);
+
+        cubeTempList.get(1).getCubeView().setY(data.getY());
+        cubeTempList.get(1).getCubeView().setX(data.getX() - latticeWidth);
+        cubeTempList.get(1).setY(data.getY());
+        cubeTempList.get(1).setX(data.getX() - latticeWidth);
+        cubeTempList.get(1).setCubeTurnWay(CUBE_TURN_Z1_WAY1);
+
+        cubeTempList.get(2).getCubeView().setY(data.getY() + latticeHeight);
+        cubeTempList.get(2).getCubeView().setX(data.getX() - latticeWidth);
+        cubeTempList.get(2).setY(data.getY() + latticeHeight);
+        cubeTempList.get(2).setX(data.getX() - latticeWidth);
+        cubeTempList.get(2).setCubeTurnWay(CUBE_TURN_Z1_WAY1);
 
     }
 }
