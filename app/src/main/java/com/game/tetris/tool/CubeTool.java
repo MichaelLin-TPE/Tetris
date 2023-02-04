@@ -1,5 +1,7 @@
 package com.game.tetris.tool;
 
+import android.util.Log;
+
 import com.game.tetris.MichaelLog;
 import com.game.tetris.R;
 import com.game.tetris.bean.CubeData;
@@ -87,8 +89,23 @@ public class CubeTool {
         return data;
     }
 
-    public static void getL2TurnWay2(ArrayList<CubeData> cubeTempList, float latticeHeight, float latticeWidth) {
+    public static void getL2TurnWay2(ArrayList<CubeData> cubeTempList, float latticeHeight, float latticeWidth, ArrayList<CubeData> cubeDataList) {
+
         CubeData data = cubeTempList.get(1);
+        int moveSpace = 0;
+        for (CubeData cubeData : cubeDataList) {
+            if (data.getX() + latticeWidth * 2 == cubeData.getX() && cubeData.getY() == data.getY()) {
+                moveSpace = -1;
+                continue;
+            }
+            if (data.getX() + latticeWidth * 2 == cubeData.getX() + latticeWidth && data.getX() + latticeWidth == cubeData.getX() && data.getY() == cubeData.getY()) {
+                moveSpace = -2;
+            }
+        }
+        float moveX = data.getX() + latticeWidth * moveSpace;
+        data.setX(moveX);
+        data.getCubeView().setX(moveX);
+
         cubeTempList.get(0).getCubeView().setY(data.getY() - latticeHeight);
         cubeTempList.get(0).getCubeView().setX(data.getX());
         cubeTempList.get(0).setY(data.getY() - latticeHeight);
@@ -129,8 +146,28 @@ public class CubeTool {
         cubeTempList.get(3).setCubeTurnWay(CUBE_TURN_L2_WAY3);
     }
 
-    public static void getL2TurnWay4(ArrayList<CubeData> cubeTempList, float latticeHeight, float latticeWidth) {
+    public static void getL2TurnWay4(ArrayList<CubeData> cubeTempList, float latticeHeight, float latticeWidth, ArrayList<CubeData> cubeDataList) {
         CubeData data = cubeTempList.get(1);
+        int moveSpace = 0;
+        for (CubeData cubeData : cubeDataList) {
+            if (data.getX() == cubeData.getX() && cubeData.getY() == data.getY()) {
+                moveSpace = 1;
+                continue;
+            }
+            if (data.getX() + latticeHeight == cubeData.getX() && cubeData.getY() == data.getY()) {
+                moveSpace = -1;
+                continue;
+            }
+            if (data.getX() + latticeWidth * 2 == cubeData.getX() + latticeWidth && data.getX() + latticeWidth == cubeData.getX() && data.getY() == cubeData.getY()) {
+                MichaelLog.i("moveSpace : 2 dataX : " + data.getX() + " cubeDataX : " + cubeData.getX());
+                moveSpace = -2;
+            }
+        }
+        float moveX = data.getX() + latticeWidth * moveSpace;
+        data.setX(moveX);
+        data.getCubeView().setX(moveX);
+
+
         cubeTempList.get(0).getCubeView().setY(data.getY());
         cubeTempList.get(0).getCubeView().setX(data.getX() + latticeWidth);
         cubeTempList.get(0).setY(data.getY());
@@ -177,8 +214,8 @@ public class CubeTool {
             if (index == 3) {
                 y = cubeY + latticeHeight * 2;
             }
-        }else if (cubeData.getCubeTurnWay() == CUBE_TURN_L2_WAY4){
-            if (index == 3){
+        } else if (cubeData.getCubeTurnWay() == CUBE_TURN_L2_WAY4) {
+            if (index == 3) {
                 y = cubeY - latticeHeight;
             }
         }
@@ -188,11 +225,11 @@ public class CubeTool {
     public static float getMainL1Cube(float cubeY, CubeData cubeData, float latticeHeight, float latticeWidth, int index) {
         float y = cubeY;
         if (cubeData.getCubeTurnWay() == CUBE_TURN_L1_WAY2) {
-            if (index == 0){
+            if (index == 0) {
                 y = cubeY - latticeHeight;
             }
-        }else if (cubeData.getCubeTurnWay() == CUBE_TURN_L1_WAY3){
-            if (index == 3){
+        } else if (cubeData.getCubeTurnWay() == CUBE_TURN_L1_WAY3) {
+            if (index == 3) {
                 y = cubeY + latticeHeight * 2;
             }
         }
@@ -205,8 +242,22 @@ public class CubeTool {
         return x;
     }
 
-    public static void getL1CTurnWay2(ArrayList<CubeData> cubeTempList, float latticeHeight, float latticeWidth) {
+    public static void getL1CTurnWay2(ArrayList<CubeData> cubeTempList, float latticeHeight, float latticeWidth, ArrayList<CubeData> cubeDataList) {
         CubeData data = cubeTempList.get(1);
+        int moveSpace = 0;
+        for (CubeData cubeData : cubeDataList) {
+            if (data.getX() + latticeWidth * 2 == cubeData.getX() && cubeData.getY() == data.getY()) {
+                moveSpace = -1;
+                continue;
+            }
+            if (data.getX() + latticeWidth * 2 == cubeData.getX() + latticeWidth && data.getX() + latticeWidth == cubeData.getX() && data.getY() == cubeData.getY()) {
+                moveSpace = -2;
+            }
+        }
+        float moveX = data.getX() + latticeWidth * moveSpace;
+        data.setX(moveX);
+        data.getCubeView().setX(moveX);
+
         cubeTempList.get(0).getCubeView().setY(data.getY() + latticeHeight);
         cubeTempList.get(0).getCubeView().setX(data.getX());
         cubeTempList.get(0).setY(data.getY() + latticeHeight);
@@ -248,8 +299,23 @@ public class CubeTool {
 
     }
 
-    public static void getL1CTurnWay4(ArrayList<CubeData> cubeTempList, float latticeHeight, float latticeWidth) {
+    public static void getL1CTurnWay4(ArrayList<CubeData> cubeTempList, float latticeHeight, float latticeWidth, ArrayList<CubeData> cubeDataList) {
         CubeData data = cubeTempList.get(1);
+        int moveSpace = 0;
+        for (CubeData cubeData : cubeDataList) {
+            if (data.getX() - latticeWidth * 2 == cubeData.getX() && cubeData.getY() == data.getY()) {
+                moveSpace = 1;
+                continue;
+            }
+            if (data.getX() - latticeWidth * 2 == cubeData.getX() - latticeWidth && data.getX() - latticeWidth == cubeData.getX() && data.getY() == cubeData.getY()) {
+                moveSpace = 2;
+            }
+        }
+        float moveX = data.getX() + latticeWidth * moveSpace;
+        data.setX(moveX);
+        data.getCubeView().setX(moveX);
+
+
         cubeTempList.get(0).getCubeView().setY(data.getY());
         cubeTempList.get(0).getCubeView().setX(data.getX() - latticeWidth);
         cubeTempList.get(0).setY(data.getY());
@@ -264,7 +330,7 @@ public class CubeTool {
 
         cubeTempList.get(3).getCubeView().setY(data.getY() - latticeHeight);
         cubeTempList.get(3).getCubeView().setX(data.getX());
-        cubeTempList.get(3).setY(data.getY()- latticeHeight);
+        cubeTempList.get(3).setY(data.getY() - latticeHeight);
         cubeTempList.get(3).setX(data.getX());
         cubeTempList.get(3).setCubeTurnWay(CUBE_TURN_L1_WAY4);
     }
@@ -294,19 +360,19 @@ public class CubeTool {
     public static void getLongCubeTurnWay(CubeData data, float latticeWidth, ArrayList<CubeData> cubeTempList, ArrayList<CubeData> cubeDataList, float gameViewLeftX, float gameViewRightX) {
         //偵測若右邊方塊超出已經放置好的方塊來決定要移動幾格
         int moveSpace = 0;
-        for (CubeData cubeData : cubeDataList){
-            if (data.getY() == cubeData.getY() && data.getX() + latticeWidth * 2 == cubeData.getX() + latticeWidth && data.getX() + latticeWidth == cubeData.getX()){
+        for (CubeData cubeData : cubeDataList) {
+            if (data.getY() == cubeData.getY() && data.getX() + latticeWidth * 2 == cubeData.getX() + latticeWidth && data.getX() + latticeWidth == cubeData.getX()) {
                 moveSpace = -2;
                 break;
             }
-            if (data.getY() == cubeData.getY() && data.getX() + latticeWidth * 2 == cubeData.getX() + latticeWidth){
+            if (data.getY() == cubeData.getY() && data.getX() + latticeWidth * 2 == cubeData.getX() + latticeWidth) {
                 moveSpace = -1;
                 break;
             }
         }
 
         float moveX = data.getX() + (latticeWidth * moveSpace);
-        MichaelLog.i("moveSpace : "+moveSpace + " moveX : "+moveX);
+        MichaelLog.i("moveSpace : " + moveSpace + " moveX : " + moveX);
         data.setX(moveX);
         data.getCubeView().setX(moveX);
         cubeTempList.get(0).getCubeView().setY(data.getY());
@@ -328,7 +394,7 @@ public class CubeTool {
         cubeTempList.get(3).setCubeTurnWay(CUBE_TURN_LONG_WAY1);
 
         //檢查是否有超出螢幕
-        checkHasOverScreen(cubeTempList,gameViewLeftX,gameViewRightX,latticeWidth);
+        checkHasOverScreen(cubeTempList, gameViewLeftX, gameViewRightX, latticeWidth);
 
     }
 
