@@ -1,7 +1,5 @@
 package com.game.tetris.tool;
 
-import android.util.Log;
-
 import com.game.tetris.MichaelLog;
 import com.game.tetris.R;
 import com.game.tetris.bean.CubeData;
@@ -293,12 +291,12 @@ public class CubeTool {
             if (index == 0) {
                 y = cubeY - latticeHeight;
             }
-        }else if (cubeData.getCubeTurnWay() == CUBE_TURN_T_WAY3){
-            if (index == 3){
+        } else if (cubeData.getCubeTurnWay() == CUBE_TURN_T_WAY3) {
+            if (index == 3) {
                 y = cubeY - latticeHeight;
             }
-        }else if (cubeData.getCubeTurnWay() == CUBE_TURN_T_WAY4){
-            if (index == 2){
+        } else if (cubeData.getCubeTurnWay() == CUBE_TURN_T_WAY4) {
+            if (index == 2) {
                 y = cubeY - latticeHeight;
             }
         }
