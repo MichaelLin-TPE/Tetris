@@ -30,6 +30,7 @@ public class MainActivity extends BaseActivity implements MainVu {
     private MainPresenter presenter;
     private ConstraintLayout gameView, rootView;
     private final Handler handler = new Handler(Looper.getMainLooper());
+    private TextView tvPoint;
 
 
 
@@ -47,7 +48,8 @@ public class MainActivity extends BaseActivity implements MainVu {
     }
 
     private void initView() {
-
+        tvPoint = findViewById(R.id.point);
+        tvPoint.setTag(0);
         gameView = findViewById(R.id.game_view);
         rootView = findViewById(R.id.root);
         gameView.post(new Runnable() {
@@ -61,6 +63,9 @@ public class MainActivity extends BaseActivity implements MainVu {
         ImageView ivLeft = findViewById(R.id.iv_left);
         ImageView ivRight = findViewById(R.id.iv_right);
         TextView tvDown = findViewById(R.id.down_button);
+        String point = getString(R.string.point) +tvPoint.getTag();
+        tvPoint.setText(point);
+
         tvDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,7 +101,7 @@ public class MainActivity extends BaseActivity implements MainVu {
     public void showLattice(LatticeData data, float latticeSize, float latticeHeight) {
         View latticeView = View.inflate(this, R.layout.item_lattice_bg, null);
         View lattice = latticeView.findViewById(R.id.lattice);
-        lattice.setBackground(ContextCompat.getDrawable(this, data.getColor()));
+//        lattice.setBackground(ContextCompat.getDrawable(this, data.getColor()));
         ViewGroup.LayoutParams params = lattice.getLayoutParams();
         params.height = (int) latticeSize;
         params.width = (int) latticeHeight;
@@ -132,6 +137,13 @@ public class MainActivity extends BaseActivity implements MainVu {
     @Override
     public ConstraintLayout getRootView() {
         return rootView;
+    }
+
+    @Override
+    public void showPoint(int point) {
+        String pointContent = getString(R.string.point) + ((Integer)(tvPoint.getTag()) + point);
+        tvPoint.setText(pointContent);
+        tvPoint.setTag((Integer)(tvPoint.getTag()) + point);
     }
 
 }

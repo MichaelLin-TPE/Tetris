@@ -20,4 +20,6 @@ public interface MainVu {
     void showGameOver();
 
     ConstraintLayout getRootView();
+
+    void showPoint(int point);
 }

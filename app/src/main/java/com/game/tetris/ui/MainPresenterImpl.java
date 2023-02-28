@@ -1155,6 +1155,7 @@ public class MainPresenterImpl implements MainPresenter {
         int removeCount = 0;
         ArrayList<CubeData> removeData = new ArrayList<>();
         ArrayList<ArrayList<CubeData>> allRemoveData = new ArrayList<>();
+        int removeLineCount = 0;
         for (CubeData data : cubeDataList) {
             if (y == 0) {
                 y = data.getY();
@@ -1167,6 +1168,7 @@ public class MainPresenterImpl implements MainPresenter {
                 removeData.add(data);
                 if (removeCount >= 9) {
                     allRemoveData.add(removeData);
+                    removeLineCount++;
                 }
             } else {
                 removeCount = 0;
@@ -1204,6 +1206,11 @@ public class MainPresenterImpl implements MainPresenter {
         } else {
             createCube();
         }
+        if (removeLineCount == 0){
+            return;
+        }
+        mView.showPoint(removeLineCount * 1000);
+
 
     }
 
