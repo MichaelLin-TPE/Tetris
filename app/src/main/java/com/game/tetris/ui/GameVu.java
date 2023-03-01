@@ -8,7 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.game.tetris.bean.CubeData;
 import com.game.tetris.bean.LatticeData;
 
-public interface MainVu {
+public interface GameVu {
     void createGameViewBackground();
 
     void showLattice(LatticeData data, float latticeSize, float latticeHeight);

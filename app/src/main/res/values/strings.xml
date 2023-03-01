@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">TetrisProject</string>
+    <string name="app_name">TetrisBattle</string>
     <string name="point">Point : </string>
 </resources>

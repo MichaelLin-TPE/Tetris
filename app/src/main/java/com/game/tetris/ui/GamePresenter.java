@@ -4,7 +4,7 @@ import com.game.tetris.bean.LatticeData;
 
 import java.util.Collection;
 
-public interface MainPresenter {
+public interface GamePresenter {
     void onCreateGameView();
 
     void createLatticeDataList(float x, float y,int right,int left , int bottom);

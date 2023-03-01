@@ -27,6 +27,7 @@ import static com.game.tetris.tool.CubeTool.CUBE_TYPE_Z;
 import static com.game.tetris.tool.CubeTool.CUBE_TYPE_Z2;
 
 import android.util.Log;
+import android.view.View;
 
 import com.game.tetris.MichaelLog;
 import com.game.tetris.R;
@@ -39,9 +40,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
-public class MainPresenterImpl implements MainPresenter {
+public class GamePresenterImpl implements GamePresenter {
 
-    private final MainVu mView;
+    private final GameVu mView;
 
     private final ArrayList<LatticeData> latticeDataList = new ArrayList<>();
     private final ArrayList<CubeData> cubeDataList = new ArrayList<>();
@@ -51,8 +52,9 @@ public class MainPresenterImpl implements MainPresenter {
     private int currentCubeType;
     private static final int CUBE_DOWN_SPEED = 500;
     private boolean isCanMoveOrTurnCube = false;
+    private View leftSupportLine,rightSupportLine;
 
-    public MainPresenterImpl(MainVu mView) {
+    public GamePresenterImpl(GameVu mView) {
         this.mView = mView;
     }
 
@@ -685,10 +687,39 @@ public class MainPresenterImpl implements MainPresenter {
         for (CubeData data : cubeTempList) {
             mView.showCube(data);
         }
+        createSupportLine();
+
         //此次產出的方塊往下降
         makeCubeGoingDown();
         //可以開始移動或是轉向
         isCanMoveOrTurnCube = true;
+    }
+
+    private void createSupportLine() {
+        float leftX = 0f;
+        float rightX = 0f;
+        float topY = 0f;
+        float bottomY = 0f;
+        for (CubeData data : cubeTempList){
+            if (leftX == 0){
+                leftX = data.getX();
+                continue;
+            }
+            if (leftX > data.getX()){
+                leftX = data.getX();
+            }
+        }
+        for (CubeData data : cubeTempList){
+            if (rightX == 0){
+                rightX = data.getCubeView().getX() + latticeWidth;
+                continue;
+            }
+            if (rightX < data.getCubeView().getX() + latticeWidth){
+                rightX = data.getCubeView().getX() + latticeWidth;
+            }
+        }
+        MichaelLog.i("leftX : "+leftX + " rightX : "+rightX);
+
     }
 
 
@@ -1336,7 +1367,7 @@ public class MainPresenterImpl implements MainPresenter {
 
 
     private int getRandomCuteType() {
-        return (int) (Math.random() * 7);
+        return CUBE_TYPE_LONG;
 //        return (int) (Math.random() * 2);
     }
 }
