@@ -22,4 +22,6 @@ public interface GameVu {
     ConstraintLayout getRootView();
 
     void showPoint(int point);
+
+    void showSupportLine(float leftX, float rightX, float topY, float bottomY);
 }

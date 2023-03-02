@@ -137,4 +137,33 @@ public class GameActivity extends BaseActivity implements GameVu {
         tvPoint.setTag((Integer)(tvPoint.getTag()) + point);
     }
 
+    @Override
+    public void showSupportLine(float leftX, float rightX, float topY, float bottomY) {
+        View leftSupportLine = View.inflate(this,R.layout.support_line_layout,null);
+        View rightSupportLine = View.inflate(this,R.layout.support_line_layout,null);
+        rootView.addView(leftSupportLine);
+        rootView.addView(rightSupportLine);
+        leftSupportLine.post(new Runnable() {
+            @Override
+            public void run() {
+                ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) leftSupportLine.getLayoutParams();
+                layoutParams.height = (int) (bottomY - topY);
+                leftSupportLine.setLayoutParams(layoutParams);
+                leftSupportLine.setX(leftX);
+                leftSupportLine.setY(topY);
+            }
+        });
+        rightSupportLine.post(new Runnable() {
+            @Override
+            public void run() {
+                ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) rightSupportLine.getLayoutParams();
+                layoutParams.height = (int) (bottomY - topY);
+                rightSupportLine.setLayoutParams(layoutParams);
+                rightSupportLine.setX(leftX);
+                rightSupportLine.setY(topY);
+            }
+        });
+    }
+
+
 }

@@ -707,6 +707,7 @@ public class GamePresenterImpl implements GamePresenter {
             }
             if (leftX > data.getX()){
                 leftX = data.getX();
+                topY = data.getY();
             }
         }
         for (CubeData data : cubeTempList){
@@ -718,8 +719,21 @@ public class GamePresenterImpl implements GamePresenter {
                 rightX = data.getCubeView().getX() + latticeWidth;
             }
         }
-        MichaelLog.i("leftX : "+leftX + " rightX : "+rightX);
-
+        if (cubeDataList.isEmpty()){
+            bottomY = gameViewBottomY;
+        }else {
+            for (CubeData data : cubeDataList){
+                if (bottomY == 0){
+                    bottomY = data.getY();
+                    continue;
+                }
+                if (bottomY > data.getY()){
+                    bottomY = data.getY();
+                }
+            }
+        }
+        MichaelLog.i("leftX : "+leftX + " rightX : "+rightX+ " topY : "+topY + " bottom Y : "+bottomY);
+        mView.showSupportLine(leftX,rightX,topY,bottomY);
     }
 
 

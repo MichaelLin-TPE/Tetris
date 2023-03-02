@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TetrisProject">
         <activity
-            android:name=".ui.WelcomeActivity"
+            android:name=".ui.welcome.WelcomeActivity"
             android:exported="true"
             android:theme="@style/StartTheme">
             <intent-filter>
