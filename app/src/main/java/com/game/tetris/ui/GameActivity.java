@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.game.tetris.MichaelLog;
 import com.game.tetris.R;
 import com.game.tetris.base.BaseActivity;
 import com.game.tetris.bean.CubeData;
@@ -22,7 +23,7 @@ public class GameActivity extends BaseActivity implements GameVu {
     private ConstraintLayout gameView, rootView;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private TextView tvPoint;
-
+    private View leftSupportLine,rightSupportLine;
 
 
     @Override
@@ -138,31 +139,55 @@ public class GameActivity extends BaseActivity implements GameVu {
     }
 
     @Override
-    public void showSupportLine(float leftX, float rightX, float topY, float bottomY) {
-        View leftSupportLine = View.inflate(this,R.layout.support_line_layout,null);
-        View rightSupportLine = View.inflate(this,R.layout.support_line_layout,null);
+    public void showSupportLine(float leftX, float rightX, float topY, float bottomY, float rightBottomY) {
+
+        MichaelLog.i("leftX : "+leftX+" , rightX : "+rightX+" , topY : "+topY+" , bottomY : "+bottomY);
+        leftSupportLine = View.inflate(this,R.layout.support_line_layout,null);
+        rightSupportLine = View.inflate(this,R.layout.support_line_layout,null);
+        leftSupportLine.setVisibility(View.INVISIBLE);
+        rightSupportLine.setVisibility(View.INVISIBLE);
         rootView.addView(leftSupportLine);
         rootView.addView(rightSupportLine);
         leftSupportLine.post(new Runnable() {
             @Override
             public void run() {
-                ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) leftSupportLine.getLayoutParams();
-                layoutParams.height = (int) (bottomY - topY);
-                leftSupportLine.setLayoutParams(layoutParams);
                 leftSupportLine.setX(leftX);
                 leftSupportLine.setY(topY);
+                leftSupportLine.getLayoutParams().height = (int) (bottomY - topY);
+                leftSupportLine.requestLayout();
+                leftSupportLine.setVisibility(View.VISIBLE);
             }
         });
         rightSupportLine.post(new Runnable() {
             @Override
             public void run() {
-                ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) rightSupportLine.getLayoutParams();
-                layoutParams.height = (int) (bottomY - topY);
-                rightSupportLine.setLayoutParams(layoutParams);
-                rightSupportLine.setX(leftX);
+                rightSupportLine.setX(rightX);
                 rightSupportLine.setY(topY);
+                rightSupportLine.getLayoutParams().height = (int) (rightBottomY - topY);
+                rightSupportLine.requestLayout();
+                rightSupportLine.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    @Override
+    public void moveSupportLine(float leftX, float rightX, float topY, float bottomY, float rightBottomY) {
+        leftSupportLine.setX(leftX);
+        rightSupportLine.setX(rightX);
+        leftSupportLine.setY(topY);
+        rightSupportLine.setY(topY);
+        rightSupportLine.getLayoutParams().height = (int) (rightBottomY - topY);
+        rightSupportLine.requestLayout();
+        leftSupportLine.getLayoutParams().height = (int) (bottomY - topY);
+        leftSupportLine.requestLayout();
+    }
+
+    @Override
+    public void removeSupportLine() {
+        if (leftSupportLine != null && rightSupportLine != null){
+            rootView.removeView(leftSupportLine);
+            rootView.removeView(rightSupportLine);
+        }
     }
 
 

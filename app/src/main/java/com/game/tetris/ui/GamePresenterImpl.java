@@ -52,7 +52,6 @@ public class GamePresenterImpl implements GamePresenter {
     private int currentCubeType;
     private static final int CUBE_DOWN_SPEED = 500;
     private boolean isCanMoveOrTurnCube = false;
-    private View leftSupportLine,rightSupportLine;
 
     public GamePresenterImpl(GameVu mView) {
         this.mView = mView;
@@ -109,6 +108,7 @@ public class GamePresenterImpl implements GamePresenter {
             data.getCubeView().setX(data.getX() - latticeWidth);
             data.setX(data.getX() - latticeWidth);
         }
+        moveSupportLine();
     }
 
     private boolean isReachLeft() {
@@ -171,6 +171,71 @@ public class GamePresenterImpl implements GamePresenter {
             data.getCubeView().setX(data.getX() + latticeWidth);
             data.setX(data.getX() + latticeWidth);
         }
+        moveSupportLine();
+
+
+    }
+
+    private void moveSupportLine() {
+        float leftX = 0f;
+        float rightX = 0f;
+        float topY = 0f;
+        float bottomY = 0f;
+        float rightBottomY = 0f;
+        for (CubeData data : cubeTempList){
+            if (leftX == 0){
+                leftX = data.getX();
+                topY = data.getY();
+                continue;
+            }
+            if (leftX > data.getX()){
+                leftX = data.getX();
+                topY = data.getY();
+            }
+        }
+        for (CubeData data : cubeTempList){
+            MichaelLog.i("right x : "+data.getX() + latticeWidth);
+            if (rightX == 0){
+                rightX = data.getX() + latticeWidth;
+                continue;
+            }
+            if (rightX < data.getX() + latticeWidth){
+                rightX = data.getX() + latticeWidth;
+            }
+        }
+        if (leftX == rightX){
+            rightX = rightX + latticeWidth;
+        }
+        if (cubeDataList.isEmpty()){
+            bottomY = gameViewBottomY + latticeHeight;
+            rightBottomY = gameViewBottomY + latticeHeight;
+        }else {
+            for (CubeData data : cubeDataList){
+                if (bottomY == 0 && data.getX() == leftX){
+                    bottomY = data.getY();
+                    continue;
+                }
+                if (bottomY > data.getY() && data.getX() == leftX){
+                    bottomY = data.getY();
+                }
+            }
+            for (CubeData data : cubeDataList){
+                if (rightBottomY == 0 && data.getX() + latticeWidth == rightX){
+                    rightBottomY = data.getY();
+                    continue;
+                }
+                if (rightBottomY > data.getY() && data.getX() + latticeWidth == rightX){
+                    rightBottomY = data.getY();
+                }
+            }
+        }
+        if (bottomY == 0){
+            bottomY = gameViewBottomY + latticeHeight;
+        }
+        if (rightBottomY == 0){
+            rightBottomY = gameViewBottomY + latticeHeight;
+        }
+        mView.moveSupportLine(leftX,rightX,topY,bottomY,rightBottomY);
     }
 
     @Override
@@ -196,6 +261,7 @@ public class GamePresenterImpl implements GamePresenter {
         if (currentCubeType == CUBE_TYPE_T){
             changeWayOfTCube();
         }
+        moveSupportLine();
     }
 
     private void changeWayOfTCube() {
@@ -659,6 +725,7 @@ public class GamePresenterImpl implements GamePresenter {
     }
 
     private void createCube() {
+        mView.removeSupportLine();
         currentCubeType = getRandomCuteType();
         MichaelLog.i("currentCubeType : " + currentCubeType);
         switch (currentCubeType) {
@@ -700,9 +767,11 @@ public class GamePresenterImpl implements GamePresenter {
         float rightX = 0f;
         float topY = 0f;
         float bottomY = 0f;
+        float rightBottomY = 0f;
         for (CubeData data : cubeTempList){
             if (leftX == 0){
                 leftX = data.getX();
+                topY = data.getY();
                 continue;
             }
             if (leftX > data.getX()){
@@ -712,28 +781,46 @@ public class GamePresenterImpl implements GamePresenter {
         }
         for (CubeData data : cubeTempList){
             if (rightX == 0){
-                rightX = data.getCubeView().getX() + latticeWidth;
+                rightX = data.getX() + latticeWidth;
                 continue;
             }
-            if (rightX < data.getCubeView().getX() + latticeWidth){
-                rightX = data.getCubeView().getX() + latticeWidth;
+            if (rightX < data.getX() + latticeWidth){
+                rightX = data.getX() + latticeWidth;
             }
         }
+        if (leftX == rightX){
+            rightX = rightX + latticeWidth;
+        }
         if (cubeDataList.isEmpty()){
-            bottomY = gameViewBottomY;
+            bottomY = gameViewBottomY + latticeHeight;
+            rightBottomY = gameViewBottomY + latticeHeight;
         }else {
             for (CubeData data : cubeDataList){
-                if (bottomY == 0){
+                if (bottomY == 0 && data.getX() == leftX){
                     bottomY = data.getY();
                     continue;
                 }
-                if (bottomY > data.getY()){
+                if (bottomY > data.getY() && data.getX() == leftX){
                     bottomY = data.getY();
                 }
             }
+            for (CubeData data : cubeDataList){
+                if (rightBottomY == 0 && data.getX() + latticeWidth == rightX){
+                    rightBottomY = data.getY();
+                    continue;
+                }
+                if (rightBottomY > data.getY() && data.getX() + latticeWidth == rightX){
+                    rightBottomY = data.getY();
+                }
+            }
         }
-        MichaelLog.i("leftX : "+leftX + " rightX : "+rightX+ " topY : "+topY + " bottom Y : "+bottomY);
-        mView.showSupportLine(leftX,rightX,topY,bottomY);
+        if (bottomY == 0){
+            bottomY = gameViewBottomY + latticeHeight;
+        }
+        if (rightBottomY == 0){
+            rightBottomY = gameViewBottomY + latticeHeight;
+        }
+        mView.showSupportLine(leftX,rightX,topY,bottomY,rightBottomY);
     }
 
 
@@ -854,6 +941,7 @@ public class GamePresenterImpl implements GamePresenter {
 
             } else {
                 mView.getHandler().postDelayed(goingDownRunnable, CUBE_DOWN_SPEED);
+                moveSupportLine();
             }
         }
     };
@@ -1381,7 +1469,7 @@ public class GamePresenterImpl implements GamePresenter {
 
 
     private int getRandomCuteType() {
-        return CUBE_TYPE_LONG;
+        return (int) (Math.random() * 7);
 //        return (int) (Math.random() * 2);
     }
 }

@@ -1,5 +1,7 @@
 package com.game.tetris.tool;
 
+import android.util.Log;
+
 import com.game.tetris.MichaelLog;
 import com.game.tetris.R;
 import com.game.tetris.bean.CubeData;
@@ -134,13 +136,13 @@ public class CubeTool {
         cubeTempList.get(2).getCubeView().setY(data.getY());
         cubeTempList.get(2).getCubeView().setX(data.getX() + latticeWidth);
         cubeTempList.get(2).setY(data.getY());
-        cubeTempList.get(2).setX(data.getX() + +latticeWidth);
+        cubeTempList.get(2).setX(data.getX() + latticeWidth);
         cubeTempList.get(2).setCubeTurnWay(CUBE_TURN_L2_WAY2);
 
         cubeTempList.get(3).getCubeView().setY(data.getY());
         cubeTempList.get(3).getCubeView().setX(data.getX() + latticeWidth * 2);
         cubeTempList.get(3).setY(data.getY());
-        cubeTempList.get(3).setX(data.getX() + +latticeWidth * 2);
+        cubeTempList.get(3).setX(data.getX() + latticeWidth * 2);
         cubeTempList.get(3).setCubeTurnWay(CUBE_TURN_L2_WAY2);
     }
 

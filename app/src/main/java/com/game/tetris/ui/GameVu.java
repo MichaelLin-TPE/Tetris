@@ -1,7 +1,6 @@
 package com.game.tetris.ui;
 
 import android.os.Handler;
-import android.view.View;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -23,5 +22,9 @@ public interface GameVu {
 
     void showPoint(int point);
 
-    void showSupportLine(float leftX, float rightX, float topY, float bottomY);
+    void showSupportLine(float leftX, float rightX, float topY, float bottomY, float rightBottomY);
+
+    void moveSupportLine(float leftX, float rightX, float topY, float bottomY, float rightBottomY);
+
+    void removeSupportLine();
 }
