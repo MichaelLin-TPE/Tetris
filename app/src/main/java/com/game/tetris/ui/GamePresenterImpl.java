@@ -453,6 +453,8 @@ public class GamePresenterImpl implements GamePresenter {
         if (!isCanMoveOrTurnCube) {
             return;
         }
+
+        mView.startPlayMoveMusic();
         if (cubeDataList.isEmpty()) {
             cubeToBottom();
             return;
@@ -481,6 +483,7 @@ public class GamePresenterImpl implements GamePresenter {
             }
         }
         if (compareY == null) {
+
             cubeToBottom();
             return;
         }
@@ -491,7 +494,6 @@ public class GamePresenterImpl implements GamePresenter {
         }
 
         isCanMoveOrTurnCube = false;
-        mView.startPlayMoveMusic();
     }
 
     @SuppressLint("CheckResult")

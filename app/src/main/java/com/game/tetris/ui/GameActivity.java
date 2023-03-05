@@ -35,8 +35,8 @@ public class GameActivity extends BaseActivity implements GameVu {
     private View leftSupportLine, rightSupportLine;
     private Intent serviceIntent;
     private MyMusicService myMusicService;
-
-
+    private final MusicTool musicTool = new MusicTool();
+    private boolean isBound = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,12 +76,6 @@ public class GameActivity extends BaseActivity implements GameVu {
                 presenter.onDownButtonClickListener();
             }
         });
-//        ivLeft.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                presenter.onLeftButtonClickListener();
-//            }
-//        });
 
         ivLeft.setOnTouchListener(new View.OnTouchListener() {
 
@@ -100,12 +94,6 @@ public class GameActivity extends BaseActivity implements GameVu {
                 return true;
             }
         });
-//        ivRight.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                presenter.onRightButtonClickListener();
-//            }
-//        });
 
         ivRight.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -137,11 +125,13 @@ public class GameActivity extends BaseActivity implements GameVu {
     protected void onDestroy() {
         super.onDestroy();
         presenter.onDestroy();
-        if (myMusicService != null){
+        if (isBound){
             unbindService(serviceConnection);
+            isBound = false;
         }
-        stopService(serviceIntent);
-        MusicTool.onDestroy();
+
+
+        musicTool.onDestroy();
     }
 
     @Override
@@ -276,28 +266,17 @@ public class GameActivity extends BaseActivity implements GameVu {
         serviceIntent.putExtra("musicResourceId",R.raw.game_music);
         startService(serviceIntent);
 
-        bindService(serviceIntent, new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName componentName, IBinder service) {
-                MyMusicService.LocalBinder binder = (MyMusicService.LocalBinder) service;
-                myMusicService = binder.getService();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName componentName) {
-                myMusicService = null;
-            }
-        },BIND_AUTO_CREATE);
+        bindService(serviceIntent, serviceConnection,BIND_AUTO_CREATE);
     }
 
     @Override
     public void startPlayMoveMusic() {
-        MusicTool.playSoundEffect(this);
+        musicTool.playSoundEffect(this);
     }
 
     @Override
     public void startPlayUpgradeMusic() {
-        MusicTool.playUpgradeMusic(this);
+        musicTool.playUpgradeMusic(this);
     }
 
     @Override
