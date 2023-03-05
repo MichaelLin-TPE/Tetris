@@ -54,7 +54,6 @@ public class CubeTool {
         return data;
     }
 
-
     public static ArrayList<CubeData> getLCubeData(int currentCubeType, ArrayList<LatticeData> latticeDataList, float latticeWidth, float latticeHeight) {
         ArrayList<CubeData> data = new ArrayList<>();
         data.add(new CubeData(latticeDataList.get(25).getX(), latticeDataList.get(25).getY(), R.drawable.cube_l_bg1, currentCubeType, latticeWidth, latticeHeight, CUBE_TURN_L1_WAY1));

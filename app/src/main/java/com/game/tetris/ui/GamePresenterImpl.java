@@ -65,14 +65,16 @@ public class GamePresenterImpl implements GamePresenter {
     private Disposable disposableKeepMoving; //控制左右按鈕按壓後的TIMER
     private Disposable disposableCountingKeepPress;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
-
+    private boolean isActiveSupport = false;
     public GamePresenterImpl(GameVu mView) {
         this.mView = mView;
     }
 
     @Override
     public void onCreateGameView() {
+        mView.startPlayBackgroundMusic();
         mView.createGameViewBackground();
+
     }
 
     @Override
@@ -109,20 +111,6 @@ public class GamePresenterImpl implements GamePresenter {
 
     }
 
-    @Override
-    public void onLeftButtonClickListener() {
-        if (!isCanMoveOrTurnCube) {
-            return;
-        }
-        if (isReachLeft() || cubeTempList.isEmpty()) {
-            return;
-        }
-        for (CubeData data : cubeTempList) {
-            data.getCubeView().setX(data.getX() - latticeWidth);
-            data.setX(data.getX() - latticeWidth);
-        }
-        moveSupportLine();
-    }
 
     private boolean isReachLeft() {
         boolean isReachLeft = false;
@@ -171,24 +159,10 @@ public class GamePresenterImpl implements GamePresenter {
         return isReachRight;
     }
 
-    @Override
-    public void onRightButtonClickListener() {
-        if (!isCanMoveOrTurnCube) {
-            return;
-        }
-        if (isReachRight() || cubeTempList.isEmpty()) {
-            return;
-        }
-        for (CubeData data : cubeTempList) {
-            data.getCubeView().setX(data.getX() + latticeWidth);
-            data.setX(data.getX() + latticeWidth);
-        }
-        moveSupportLine();
-
-
-    }
-
     private void moveSupportLine() {
+        if (!isActiveSupport){
+            return;
+        }
         float leftX = 0f;
         float rightX = 0f;
         float topY = 0f;
@@ -272,7 +246,9 @@ public class GamePresenterImpl implements GamePresenter {
         if (currentCubeType == CUBE_TYPE_T) {
             changeWayOfTCube();
         }
+
         moveSupportLine();
+        moveSupportCube();
     }
 
     private void changeWayOfTCube() {
@@ -515,6 +491,7 @@ public class GamePresenterImpl implements GamePresenter {
         }
 
         isCanMoveOrTurnCube = false;
+        mView.startPlayMoveMusic();
     }
 
     @SuppressLint("CheckResult")
@@ -572,6 +549,62 @@ public class GamePresenterImpl implements GamePresenter {
             data.setX(data.getX() - latticeWidth);
         }
         moveSupportLine();
+        for (CubeData data : supportCubeList){
+            data.getCubeView().setX(data.getX() - latticeWidth);
+            data.setX(data.getX() - latticeWidth);
+        }
+        moveSupportCube();
+    }
+
+    private void moveSupportCube() {
+
+        for (int i = 0 ; i < cubeTempList.size() ; i++){
+            supportCubeList.get(i).getCubeView().setX(cubeTempList.get(i).getX());
+            supportCubeList.get(i).setX(cubeTempList.get(i).getX());
+        }
+
+        if (cubeDataList.isEmpty()) {
+            moveSupportCubeToBottom();
+            return;
+        }
+        ArrayList<CompareY> touchYList = new ArrayList<>();
+        for (CubeData data : cubeTempList) {
+            for (CubeData cubeData : cubeDataList) {
+                if (data.getX() == cubeData.getX() && data.getY() < cubeData.getY()) {
+                    touchYList.add(new CompareY(cubeData.getY(), data.getY()));
+                    break;
+                }
+            }
+        }
+        CompareY compareY = null;
+        float compareHeight = 0;
+        for (CompareY data : touchYList) {
+            if (compareY == null) {
+                compareY = new CompareY(data.getExistingCubeY(), data.getCubeY());
+                compareHeight = data.getExistingCubeY() - data.getCubeY();
+                continue;
+            }
+            if (compareHeight > data.getExistingCubeY() - data.getCubeY()) {
+                compareY.setExistingCubeY(data.getExistingCubeY());
+                compareY.setCubeY(data.getCubeY());
+                compareHeight = compareY.getExistingCubeY() - compareY.getCubeY();
+            }
+        }
+        if (compareY == null) {
+            moveSupportCubeToBottom();
+            return;
+        }
+        int moveSpace = (int) ((compareY.getExistingCubeY() - latticeHeight - compareY.getCubeY()) / latticeHeight);
+        ArrayList<Float> moveYArray = new ArrayList<>();
+        for (CubeData cubeData : cubeTempList) {
+            moveYArray.add(cubeData.getY() + (latticeHeight * moveSpace));
+        }
+        int index = 0;
+        for (CubeData cubeData : supportCubeList){
+            cubeData.getCubeView().setY(moveYArray.get(index));
+            cubeData.setY(moveYArray.get(index));
+            index ++;
+        }
     }
 
     private boolean isClick() {
@@ -591,6 +624,7 @@ public class GamePresenterImpl implements GamePresenter {
         if (isClick()) {
             MichaelLog.i("單下點擊");
             moveCubeSingleLeft();
+
         }
 
     }
@@ -617,7 +651,13 @@ public class GamePresenterImpl implements GamePresenter {
             data.getCubeView().setX(data.getX() + latticeWidth);
             data.setX(data.getX() + latticeWidth);
         }
+        for (CubeData data : supportCubeList){
+            data.getCubeView().setX(data.getX() + latticeWidth);
+            data.setX(data.getX() + latticeWidth);
+        }
         moveSupportLine();
+        moveSupportCube();
+
     }
 
 
@@ -658,6 +698,49 @@ public class GamePresenterImpl implements GamePresenter {
             cubeData.getCubeView().setY(cubeData.getY() + latticeHeight * moveSpace);
             cubeData.setY(cubeData.getY() + latticeHeight * moveSpace);
             MichaelLog.i("cubeY : " + cubeData.getY());
+        }
+    }
+
+    private void moveSupportCubeToBottom() {
+        //先取出最高的Y
+        float lastY = 0;
+        for (CubeData data : cubeTempList) {
+            if (lastY == 0) {
+                lastY = data.getY();
+                continue;
+            }
+            if (lastY < data.getY()) {
+                lastY = data.getY();
+            }
+        }
+        int moveSpace = (int) ((gameViewBottomY - lastY) / latticeHeight);
+        ArrayList<Float> yArray = new ArrayList<>();
+        for (CubeData cubeData : cubeTempList) {
+            yArray.add(cubeData.getY() + latticeHeight * moveSpace);
+        }
+        
+        for (int i = 0 ; i < yArray.size() ; i++){
+            supportCubeList.get(i).getCubeView().setY(yArray.get(i));
+            supportCubeList.get(i).setY(yArray.get(i));
+        }
+    }
+
+    private void supportCubeToBottom() {
+        //先取出最高的Y
+        float lastY = 0;
+        for (CubeData data : supportCubeList) {
+            if (lastY == 0) {
+                lastY = data.getY();
+                continue;
+            }
+            if (lastY < data.getY()) {
+                lastY = data.getY();
+            }
+        }
+        int moveSpace = (int) ((gameViewBottomY - lastY) / latticeHeight);
+        for (CubeData cubeData : supportCubeList) {
+            cubeData.setY(cubeData.getY() + latticeHeight * moveSpace);
+            mView.showSupportCube(cubeData);
         }
     }
 
@@ -859,44 +942,106 @@ public class GamePresenterImpl implements GamePresenter {
     }
 
     private void createCube() {
+        removeAllSupportCube();
         mView.removeSupportLine();
         currentCubeType = getRandomCuteType();
         MichaelLog.i("currentCubeType : " + currentCubeType);
         switch (currentCubeType) {
             case CUBE_TYPE_SQUIRE:
                 cubeTempList = CubeTool.getSquareCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
+                supportCubeList = CubeTool.getSquareCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
                 break;
             case CUBE_TYPE_LONG:
                 cubeTempList = CubeTool.getLongCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
+                supportCubeList = CubeTool.getLongCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
                 break;
             case CUBE_TYPE_L1:
                 cubeTempList = CubeTool.getLCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
+                supportCubeList = CubeTool.getLCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
                 break;
             case CUBE_TYPE_L2:
                 cubeTempList = CubeTool.getL2CubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
+                supportCubeList = CubeTool.getL2CubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
                 break;
             case CUBE_TYPE_T:
                 cubeTempList = CubeTool.getTCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
+                supportCubeList = CubeTool.getTCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
                 break;
             case CUBE_TYPE_Z:
                 cubeTempList = CubeTool.getZCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
+                supportCubeList = CubeTool.getZCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
                 break;
             case CUBE_TYPE_Z2:
                 cubeTempList = CubeTool.getZ2CubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
+                supportCubeList = CubeTool.getZ2CubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
                 break;
         }
         for (CubeData data : cubeTempList) {
             mView.showCube(data);
         }
-        createSupportLine();
-
         //此次產出的方塊往下降
         makeCubeGoingDown();
         //可以開始移動或是轉向
         isCanMoveOrTurnCube = true;
+        //輔助方塊
+        createSupportCube();
+        //輔助線
+        createSupportLine();
+    }
+
+    private void removeAllSupportCube() {
+        if (supportCubeList == null){
+            return;
+        }
+        for (CubeData cubeData : supportCubeList){
+            mView.removeSupportCube(cubeData.getCubeView());
+        }
+        supportCubeList.clear();
+    }
+
+    private void createSupportCube() {
+        if (cubeDataList.isEmpty()) {
+            supportCubeToBottom();
+            return;
+        }
+        ArrayList<CompareY> touchYList = new ArrayList<>();
+        for (CubeData data : supportCubeList) {
+            for (CubeData cubeData : cubeDataList) {
+                if (data.getX() == cubeData.getX() && data.getY() < cubeData.getY()) {
+                    touchYList.add(new CompareY(cubeData.getY(), data.getY()));
+                    break;
+                }
+            }
+        }
+        CompareY compareY = null;
+        float compareHeight = 0;
+        for (CompareY data : touchYList) {
+            if (compareY == null) {
+                compareY = new CompareY(data.getExistingCubeY(), data.getCubeY());
+                compareHeight = data.getExistingCubeY() - data.getCubeY();
+                continue;
+            }
+            if (compareHeight > data.getExistingCubeY() - data.getCubeY()) {
+                compareY.setExistingCubeY(data.getExistingCubeY());
+                compareY.setCubeY(data.getCubeY());
+                compareHeight = compareY.getExistingCubeY() - compareY.getCubeY();
+            }
+        }
+        if (compareY == null) {
+            supportCubeToBottom();
+            return;
+        }
+        int moveSpace = (int) ((compareY.getExistingCubeY() - latticeHeight - compareY.getCubeY()) / latticeHeight);
+        for (CubeData cubeData : supportCubeList) {
+            cubeData.setY(cubeData.getY() + (latticeHeight * moveSpace));
+            mView.showSupportCube(cubeData);
+        }
     }
 
     private void createSupportLine() {
+        if (!isActiveSupport){
+            return;
+        }
         float leftX = 0f;
         float rightX = 0f;
         float topY = 0f;
@@ -1476,6 +1621,7 @@ public class GamePresenterImpl implements GamePresenter {
         if (removeLineCount == 0) {
             return;
         }
+        mView.startPlayUpgradeMusic();
         mView.showPoint(removeLineCount * 1000);
 
 
@@ -1602,7 +1748,8 @@ public class GamePresenterImpl implements GamePresenter {
 
 
     private int getRandomCuteType() {
+//        return CUBE_TYPE_LONG;
         return (int) (Math.random() * 7);
-//        return (int) (Math.random() * 2);
+
     }
 }

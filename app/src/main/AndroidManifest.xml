@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.game.tetris">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <application
         android:name=".application.MyApplication"
         android:allowBackup="true"
@@ -21,6 +23,7 @@
             </intent-filter>
 
         </activity>
+        <service android:name=".service.MyMusicService"/>
         <activity
             android:name=".ui.GameActivity"
             android:exported="false">

@@ -9,10 +9,6 @@ public interface GamePresenter {
 
     void createLatticeDataList(float x, float y,int right,int left , int bottom);
 
-    void onLeftButtonClickListener();
-
-    void onRightButtonClickListener();
-
     void onTurnCubeButtonClickListener();
 
     void onDownButtonClickListener();
