@@ -1,8 +1,11 @@
 package com.game.tetris.ui;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -23,7 +26,7 @@ public class GameActivity extends BaseActivity implements GameVu {
     private ConstraintLayout gameView, rootView;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private TextView tvPoint;
-    private View leftSupportLine,rightSupportLine;
+    private View leftSupportLine, rightSupportLine;
 
 
     @Override
@@ -39,6 +42,7 @@ public class GameActivity extends BaseActivity implements GameVu {
         presenter = new GamePresenterImpl(this);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initView() {
         tvPoint = findViewById(R.id.point);
         tvPoint.setTag(0);
@@ -55,7 +59,7 @@ public class GameActivity extends BaseActivity implements GameVu {
         ImageView ivLeft = findViewById(R.id.iv_left);
         ImageView ivRight = findViewById(R.id.iv_right);
         TextView tvDown = findViewById(R.id.down_button);
-        String point = getString(R.string.point) +tvPoint.getTag();
+        String point = getString(R.string.point) + tvPoint.getTag();
         tvPoint.setText(point);
 
         tvDown.setOnClickListener(new View.OnClickListener() {
@@ -64,18 +68,54 @@ public class GameActivity extends BaseActivity implements GameVu {
                 presenter.onDownButtonClickListener();
             }
         });
-        ivLeft.setOnClickListener(new View.OnClickListener() {
+//        ivLeft.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                presenter.onLeftButtonClickListener();
+//            }
+//        });
+
+        ivLeft.setOnTouchListener(new View.OnTouchListener() {
+
             @Override
-            public void onClick(View view) {
-                presenter.onLeftButtonClickListener();
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        presenter.onLeftPressDownListener();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        presenter.onLeftPressUpListener();
+                        break;
+                }
+
+                return true;
             }
         });
-        ivRight.setOnClickListener(new View.OnClickListener() {
+//        ivRight.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                presenter.onRightButtonClickListener();
+//            }
+//        });
+
+        ivRight.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View view) {
-                presenter.onRightButtonClickListener();
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        presenter.onRightPressDownListener();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        presenter.onRightPressUpListener();
+                        break;
+                }
+
+                return true;
             }
         });
+
         tvTurn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,9 +124,16 @@ public class GameActivity extends BaseActivity implements GameVu {
         });
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
+    }
+
     @Override
     public void createGameViewBackground() {
-        presenter.createLatticeDataList(gameView.getX() ,gameView.getY(),gameView.getRight(),gameView.getLeft(),gameView.getBottom());
+        presenter.createLatticeDataList(gameView.getX(), gameView.getY(), gameView.getRight(), gameView.getLeft(), gameView.getBottom());
     }
 
     @Override
@@ -123,7 +170,7 @@ public class GameActivity extends BaseActivity implements GameVu {
 
     @Override
     public void showGameOver() {
-        Toast.makeText(this,"GameOver",Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "GameOver", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -133,17 +180,16 @@ public class GameActivity extends BaseActivity implements GameVu {
 
     @Override
     public void showPoint(int point) {
-        String pointContent = getString(R.string.point) + ((Integer)(tvPoint.getTag()) + point);
+        String pointContent = getString(R.string.point) + ((Integer) (tvPoint.getTag()) + point);
         tvPoint.setText(pointContent);
-        tvPoint.setTag((Integer)(tvPoint.getTag()) + point);
+        tvPoint.setTag((Integer) (tvPoint.getTag()) + point);
     }
 
     @Override
     public void showSupportLine(float leftX, float rightX, float topY, float bottomY, float rightBottomY) {
 
-        MichaelLog.i("leftX : "+leftX+" , rightX : "+rightX+" , topY : "+topY+" , bottomY : "+bottomY);
-        leftSupportLine = View.inflate(this,R.layout.support_line_layout,null);
-        rightSupportLine = View.inflate(this,R.layout.support_line_layout,null);
+        leftSupportLine = View.inflate(this, R.layout.support_line_layout, null);
+        rightSupportLine = View.inflate(this, R.layout.support_line_layout, null);
         leftSupportLine.setVisibility(View.INVISIBLE);
         rightSupportLine.setVisibility(View.INVISIBLE);
         rootView.addView(leftSupportLine);
@@ -184,7 +230,7 @@ public class GameActivity extends BaseActivity implements GameVu {
 
     @Override
     public void removeSupportLine() {
-        if (leftSupportLine != null && rightSupportLine != null){
+        if (leftSupportLine != null && rightSupportLine != null) {
             rootView.removeView(leftSupportLine);
             rootView.removeView(rightSupportLine);
         }

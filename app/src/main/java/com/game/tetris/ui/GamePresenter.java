@@ -16,4 +16,16 @@ public interface GamePresenter {
     void onTurnCubeButtonClickListener();
 
     void onDownButtonClickListener();
+
+    void onLeftPressDownListener();
+
+    void onLeftPressUpListener();
+
+    void onRightPressDownListener();
+    
+
+    void onDestroy();
+
+
+    void onRightPressUpListener();
 }
