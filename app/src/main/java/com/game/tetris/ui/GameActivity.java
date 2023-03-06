@@ -8,10 +8,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.Vibrator;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +25,7 @@ import com.game.tetris.R;
 import com.game.tetris.base.BaseActivity;
 import com.game.tetris.bean.CubeData;
 import com.game.tetris.bean.LatticeData;
+import com.game.tetris.dialog.GameOverDialog;
 import com.game.tetris.service.MyMusicService;
 import com.game.tetris.tool.MusicTool;
 
@@ -37,6 +40,7 @@ public class GameActivity extends BaseActivity implements GameVu {
     private MyMusicService myMusicService;
     private final MusicTool musicTool = new MusicTool();
     private boolean isBound = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,7 +129,7 @@ public class GameActivity extends BaseActivity implements GameVu {
     protected void onDestroy() {
         super.onDestroy();
         presenter.onDestroy();
-        if (isBound){
+        if (isBound) {
             unbindService(serviceConnection);
             isBound = false;
         }
@@ -187,8 +191,17 @@ public class GameActivity extends BaseActivity implements GameVu {
     }
 
     @Override
-    public void showGameOver() {
-        Toast.makeText(this, "GameOver", Toast.LENGTH_LONG).show();
+    public void showGameOver(String title) {
+        GameOverDialog dialog = new GameOverDialog();
+        dialog.setTitle(title);
+        dialog.show(getSupportFragmentManager(), "dialog");
+        dialog.setOnGameOverDialogListener(new GameOverDialog.OnGameOverDialogListener() {
+            @Override
+            public void onRePlayClick() {
+                presenter.onReplayClickListener();
+            }
+        });
+
     }
 
     @Override
@@ -263,10 +276,10 @@ public class GameActivity extends BaseActivity implements GameVu {
     public void startPlayBackgroundMusic() {
         MichaelLog.i("startPlayBackgroundMusic");
         serviceIntent = new Intent(this, MyMusicService.class);
-        serviceIntent.putExtra("musicResourceId",R.raw.game_music);
+        serviceIntent.putExtra("musicResourceId", R.raw.game_music);
         startService(serviceIntent);
 
-        bindService(serviceIntent, serviceConnection,BIND_AUTO_CREATE);
+        bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE);
     }
 
     @Override
@@ -277,6 +290,17 @@ public class GameActivity extends BaseActivity implements GameVu {
     @Override
     public void startPlayUpgradeMusic() {
         musicTool.playUpgradeMusic(this);
+    }
+
+    @Override
+    public void startVibrator(long timeMillis) {
+        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        vibrator.vibrate(timeMillis);
+    }
+
+    @Override
+    public String getGameOverContent() {
+        return getString(R.string.game_over) + " " + tvPoint.getTag();
     }
 
     @Override

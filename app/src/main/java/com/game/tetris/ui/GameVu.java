@@ -19,7 +19,7 @@ public interface GameVu {
 
     Handler getHandler();
 
-    void showGameOver();
+    void showGameOver(String title);
 
     ConstraintLayout getRootView();
 
@@ -38,4 +38,9 @@ public interface GameVu {
     void startPlayMoveMusic();
 
     void startPlayUpgradeMusic();
+
+    void startVibrator(long timeMillis);
+
+
+    String getGameOverContent();
 }

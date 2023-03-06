@@ -46,6 +46,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -455,6 +456,7 @@ public class GamePresenterImpl implements GamePresenter {
         }
 
         mView.startPlayMoveMusic();
+        mView.startVibrator(100);
         if (cubeDataList.isEmpty()) {
             cubeToBottom();
             return;
@@ -681,6 +683,42 @@ public class GamePresenterImpl implements GamePresenter {
             MichaelLog.i("單下點擊");
             moveCubeSingleRight();
         }
+    }
+
+    @Override
+    public void onReplayClickListener() {
+        Disposable disposableAll = Observable.just(cubeDataList)
+                .subscribeOn(Schedulers.io())
+                .map(new Function<ArrayList<CubeData>, CubeData>() {
+                    @Override
+                    public CubeData apply(ArrayList<CubeData> cubeData) throws Exception {
+                        return null;
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(res ->{
+                    mView.removeSupportCube(res.getCubeView());
+                });
+        compositeDisposable.add(disposableAll);
+
+        Disposable disposableCurrent = Observable.just(cubeTempList)
+                .subscribeOn(Schedulers.io())
+                .map(new Function<ArrayList<CubeData>, CubeData>() {
+                    @Override
+                    public CubeData apply(ArrayList<CubeData> cubeData) throws Exception {
+                        return null;
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(res ->{
+                    mView.removeSupportCube(res.getCubeView());
+                });
+        compositeDisposable.add(disposableCurrent);
+        removeAllSupportCube();
+    }
+
+    private CubeData createView(CubeData cubeData) {
+        return null;
     }
 
     private void cubeToBottom() {
@@ -1211,7 +1249,7 @@ public class GamePresenterImpl implements GamePresenter {
 
             if (isGameOver) {
                 mView.getHandler().removeCallbacks(this);
-                mView.showGameOver();
+                mView.showGameOver(mView.getGameOverContent());
                 return;
             }
 
@@ -1750,8 +1788,8 @@ public class GamePresenterImpl implements GamePresenter {
 
 
     private int getRandomCuteType() {
-//        return CUBE_TYPE_LONG;
-        return (int) (Math.random() * 7);
+        return (int) (Math.random() * 2) + 3;
+//        return (int) (Math.random() * 7);
 
     }
 }
