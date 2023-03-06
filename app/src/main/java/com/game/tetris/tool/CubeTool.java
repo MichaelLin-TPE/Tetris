@@ -271,14 +271,14 @@ public class CubeTool {
     }
 
     public static float getMainZ2Cube(float cubeY, CubeData cubeData, float latticeHeight, float latticeWidth, int index) {
-        MichaelLog.i("type : " + cubeData.getCubeType() + " index : " + index);
         float y = cubeY;
         if (cubeData.getCubeTurnWay() == CUBE_TURN_Z2_WAY2) {
             if (index == 0 || index == 1) {
                 y = cubeY - latticeHeight;
             }
         } else if (cubeData.getCubeTurnWay() == CUBE_TURN_Z2_WAY1) {
-            if (index == 2) {
+            MichaelLog.i("index : "+index);
+            if (index == 2 || index == 3) {
                 y = cubeY - latticeHeight;
             }
         }
@@ -286,7 +286,6 @@ public class CubeTool {
     }
 
     public static float getMainTCube(float cubeY, CubeData cubeData, float latticeHeight, float latticeWidth, int index) {
-        MichaelLog.i("type : " + cubeData.getCubeType() + " index : " + index);
         float y = cubeY;
         if (cubeData.getCubeTurnWay() == CUBE_TURN_T_WAY2) {
             if (index == 0) {

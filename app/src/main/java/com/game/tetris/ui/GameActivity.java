@@ -200,6 +200,11 @@ public class GameActivity extends BaseActivity implements GameVu {
             public void onRePlayClick() {
                 presenter.onReplayClickListener();
             }
+
+            @Override
+            public void onExitClick() {
+                presenter.onExitClickListener();
+            }
         });
 
     }
@@ -301,6 +306,16 @@ public class GameActivity extends BaseActivity implements GameVu {
     @Override
     public String getGameOverContent() {
         return getString(R.string.game_over) + " " + tvPoint.getTag();
+    }
+
+    @Override
+    public void closePage() {
+        finish();
+    }
+
+    @Override
+    public void resetPoint() {
+        tvPoint.setTag(0);
     }
 
     @Override

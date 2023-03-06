@@ -26,4 +26,6 @@ public interface GamePresenter {
     void onRightPressUpListener();
 
     void onReplayClickListener();
+
+    void onExitClickListener();
 }

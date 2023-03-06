@@ -19,14 +19,12 @@ public class MusicTool {
             soundEffectPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    MichaelLog.i("完成播放");
                     mediaPlayer.release();
                     soundEffectPlayer = null;
                 }
             });
         }
         if (!soundEffectPlayer.isPlaying()) {
-            MichaelLog.i("play music");
             soundEffectPlayer.start();
         }
     }

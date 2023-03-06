@@ -43,4 +43,8 @@ public interface GameVu {
 
 
     String getGameOverContent();
+
+    void closePage();
+
+    void resetPoint();
 }

@@ -75,6 +75,7 @@ public class GameOverDialog extends DialogFragment {
         tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                onGameOverDialogListener.onExitClick();
                 dismiss();
             }
         });
@@ -92,7 +93,7 @@ public class GameOverDialog extends DialogFragment {
 
     private void startAnimation() {
 
-        disposable = Observable.interval(100, TimeUnit.MILLISECONDS)
+        disposable = Observable.interval(50, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(res -> {
@@ -112,6 +113,7 @@ public class GameOverDialog extends DialogFragment {
 
     public interface OnGameOverDialogListener{
         void onRePlayClick();
+        void onExitClick();
     }
 
 }
