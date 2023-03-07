@@ -41,10 +41,11 @@ public interface GameVu {
 
     void startVibrator(long timeMillis);
 
-
     String getGameOverContent();
 
     void closePage();
 
     void resetPoint();
+
+    void showConfirmExitDialog();
 }

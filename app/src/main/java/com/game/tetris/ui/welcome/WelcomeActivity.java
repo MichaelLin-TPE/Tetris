@@ -13,7 +13,10 @@ import android.widget.TextView;
 
 import com.game.tetris.R;
 import com.game.tetris.base.BaseActivity;
+import com.game.tetris.dialog.SettingDialog;
 import com.game.tetris.ui.GameActivity;
+
+import java.security.Signature;
 
 public class WelcomeActivity extends BaseActivity implements WelcomeVu {
 
@@ -42,6 +45,13 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
         });
         TextView tvPlay = findViewById(R.id.play_game);
         TextView tvExit = findViewById(R.id.exit);
+        TextView tvSetting = findViewById(R.id.setting);
+        tvSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                presenter.onSettingClickListener();
+            }
+        });
         tvPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,5 +116,11 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
     public void goToGamePage() {
         Intent it = new Intent(this, GameActivity.class);
         startActivity(it);
+    }
+
+    @Override
+    public void showSettingDialog() {
+        SettingDialog dialog = new SettingDialog();
+        dialog.show(getSupportFragmentManager(),"dialog");
     }
 }

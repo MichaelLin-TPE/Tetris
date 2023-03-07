@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="grey">#AAAAAA</color>
     <color name="button_stroke_color">#737171</color>
+    <color name="my_switch_thumb_color">#F2B705</color>
+    <color name="my_switch_track_color">#C4C4C4</color>
 </resources>

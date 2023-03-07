@@ -7,4 +7,8 @@
     <string name="exit">EXIT</string>
     <string name="game_over">Game Over\nTotal Point :</string>
     <string name="play_again">Play Again</string>
+    <string name="setting">Setting</string>
+    <string name="need_support_cube">Support Cube</string>
+    <string name="confirm_exit">Are you sure you want to leave?</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -22,6 +22,7 @@
             app:layout_constraintRight_toRightOf="parent"
             android:layout_width="0dp"
             android:textSize="20sp"
+            android:layout_marginHorizontal="20dp"
             android:gravity="center"
             android:textColor="@color/white"
             android:text="@string/game_over"
@@ -38,7 +39,7 @@
             android:background="@drawable/dialog_left_button_selector"
             app:layout_constraintRight_toLeftOf="@id/replay_button"
             android:layout_width="0dp"
-            android:layout_height="40dp"/>
+            android:layout_height="55dp"/>
 
         <com.game.tetris.custom.IntroFontTextView
             android:id="@+id/replay_button"
@@ -51,7 +52,7 @@
             android:textColor="@color/white"
             app:layout_constraintLeft_toRightOf="@id/cancel_button"
             android:layout_width="0dp"
-            android:layout_height="40dp"/>
+            android:layout_height="55dp"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,4 +14,6 @@ public interface WelcomeVu {
     void finishApp();
 
     void goToGamePage();
+
+    void showSettingDialog();
 }

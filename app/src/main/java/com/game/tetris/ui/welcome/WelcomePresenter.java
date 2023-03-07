@@ -10,4 +10,6 @@ public interface WelcomePresenter {
     void onExitGameClickListener();
 
     void onPlayGameClickListener();
+
+    void onSettingClickListener();
 }

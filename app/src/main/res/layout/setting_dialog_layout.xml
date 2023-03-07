@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="250dp"
+    android:layout_height="225dp">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        app:layout_constraintTop_toTopOf="@id/logo"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/game_over_dialog_bg"
+        android:layout_width="250dp"
+        android:layout_height="200dp">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_support_cube"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/title"
+            android:layout_marginTop="50dp"
+            android:checked="false"
+            android:textOff=""
+            android:textOn=""
+            android:thumb="@drawable/my_switch_thumb"
+            app:track="@drawable/my_switch_track"
+            android:layout_width="70dp"
+            android:layout_height="40dp"/>
+
+
+
+        <com.game.tetris.custom.IntroFontTextView
+            android:id="@+id/title"
+            app:layout_constraintTop_toTopOf="@id/switch_support_cube"
+            app:layout_constraintBottom_toBottomOf="@id/switch_support_cube"
+            app:layout_constraintLeft_toRightOf="@id/switch_support_cube"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="wrap_content"
+            android:textSize="18sp"
+            android:gravity="center|start"
+            android:textColor="@color/white"
+            android:text="@string/need_support_cube"
+            android:layout_height="wrap_content"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/logo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:src="@drawable/app_logo_round"
+        android:layout_width="60dp"
+        android:layout_height="60dp"/>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

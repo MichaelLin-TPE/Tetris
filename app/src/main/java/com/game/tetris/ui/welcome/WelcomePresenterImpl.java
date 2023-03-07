@@ -34,4 +34,9 @@ public class WelcomePresenterImpl implements WelcomePresenter {
     public void onPlayGameClickListener() {
         mView.goToGamePage();
     }
+
+    @Override
+    public void onSettingClickListener() {
+        mView.showSettingDialog();
+    }
 }

@@ -1,21 +1,46 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# 保留Activity和Application類
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# 保留Fragment類
+-keep public class * extends android.app.Fragment
+-keep public class * extends androidx.fragment.app.Fragment
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# 保留Gson類
+-keep class com.google.gson.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# 保留OkHttp類
+-keep class okhttp3.** { *; }
+
+# 保留Retrofit類
+-keep class retrofit2.** { *; }
+
+# 保留ButterKnife類
+-keep class butterknife.** { *; }
+-keep class **$$ViewBinder { *; }
+
+# 保留Support Library類
+-keep class android.support.v4.** { *; }
+-keep interface android.support.v4.** { *; }
+
+# 保留Support Design Library類
+-keep class android.support.design.** { *; }
+-keep interface android.support.design.** { *; }
+# RxJava 2
+-dontwarn io.reactivex.**
+-keep class io.reactivex.** { *; }
+-keepclassmembers class io.reactivex.** { *; }
+
+# 保留RxJava 2中的一些接口
+-keep interface io.reactivex.** { *; }
+
+# 保留RxJava 2中的一些枚舉
+-keepclassmembers enum io.reactivex.** { *; }
+
+# 保留RxJava 2中的一些注解
+-keepclassmembers class io.reactivex.android.** { *; }
+-keepattributes Signature,Annotation
+# RxAndroid 2
+-dontwarn com.jakewharton.**
+-keep class com.jakewharton.** { *; }
+-keepattributes Signature

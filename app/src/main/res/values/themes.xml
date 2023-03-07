@@ -24,4 +24,14 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
+    <style name="MySwitchStyle" parent="Widget.AppCompat.CompoundButton.Switch">
+        <item name="android:thumb">@drawable/my_thumb_on</item>
+        <item name="android:track">@drawable/my_track_on</item>
+    </style>
+
+    <style name="MyDialogFragmentStyle" parent="@android:style/Theme.Dialog">
+        <item name="android:windowEnterAnimation">@anim/fade_in</item>
+        <item name="android:windowExitAnimation">@anim/fade_out</item>
+    </style>
+
 </resources>

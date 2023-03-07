@@ -35,6 +35,7 @@ import com.game.tetris.bean.CompareY;
 import com.game.tetris.bean.CubeData;
 import com.game.tetris.bean.LatticeData;
 import com.game.tetris.tool.CubeTool;
+import com.game.tetris.tool.SharedPreferTool;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,8 +46,6 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -56,7 +55,7 @@ public class GamePresenterImpl implements GamePresenter {
 
     private final ArrayList<LatticeData> latticeDataList = new ArrayList<>();
     private final ArrayList<CubeData> cubeDataList = new ArrayList<>();
-    private ArrayList<CubeData> cubeTempList,supportCubeList;
+    private ArrayList<CubeData> cubeTempList, supportCubeList;
     private float latticeWidth, latticeHeight; // 格子的寬跟高
     private float gameViewBottomY, gameViewTopY, gameViewLeftX, gameViewRightX;
     private int currentCubeType;
@@ -66,7 +65,8 @@ public class GamePresenterImpl implements GamePresenter {
     private Disposable disposableKeepMoving; //控制左右按鈕按壓後的TIMER
     private Disposable disposableCountingKeepPress;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private boolean isActiveSupport = false;
+    private boolean isActiveSupportLine = false;
+
     public GamePresenterImpl(GameVu mView) {
         this.mView = mView;
     }
@@ -160,7 +160,7 @@ public class GamePresenterImpl implements GamePresenter {
     }
 
     private void moveSupportLine() {
-        if (!isActiveSupport){
+        if (!isActiveSupportLine) {
             return;
         }
         float leftX = 0f;
@@ -248,6 +248,9 @@ public class GamePresenterImpl implements GamePresenter {
         }
 
         moveSupportLine();
+        if (!SharedPreferTool.getInstance().isActiveSupportCube()) {
+            return;
+        }
         moveSupportCube();
     }
 
@@ -457,7 +460,7 @@ public class GamePresenterImpl implements GamePresenter {
         for (CubeData data : cubeTempList) {
             for (CubeData cubeData : cubeDataList) {
                 if (data.getX() == cubeData.getX() && data.getY() < cubeData.getY()) {
-                    touchYList.add(new CompareY(cubeData.getY(), data.getY()));
+                    touchYList.add(new CompareY(cubeData.getY(), data.getY(), data.getX()));
                     break;
                 }
             }
@@ -466,7 +469,7 @@ public class GamePresenterImpl implements GamePresenter {
         float compareHeight = 0;
         for (CompareY data : touchYList) {
             if (compareY == null) {
-                compareY = new CompareY(data.getExistingCubeY(), data.getCubeY());
+                compareY = new CompareY(data.getExistingCubeY(), data.getCubeY(), data.getCubeX());
                 compareHeight = data.getExistingCubeY() - data.getCubeY();
                 continue;
             }
@@ -477,14 +480,27 @@ public class GamePresenterImpl implements GamePresenter {
             }
         }
         if (compareY == null) {
-
             cubeToBottom();
             return;
         }
         int moveSpace = (int) ((compareY.getExistingCubeY() - latticeHeight - compareY.getCubeY()) / latticeHeight);
+        ArrayList<Float> yArray = new ArrayList<>();
         for (CubeData cubeData : cubeTempList) {
-            cubeData.getCubeView().setY(cubeData.getY() + (latticeHeight * moveSpace));
-            cubeData.setY(cubeData.getY() + (latticeHeight * moveSpace));
+            yArray.add(cubeData.getY() + (latticeHeight * moveSpace));
+        }
+        int index = 0;
+        boolean isFoundNeedToMove = false;
+        for (Float y : yArray) {
+            if (y > gameViewBottomY) {
+                isFoundNeedToMove = true;
+            }
+            index++;
+        }
+        index = 0;
+        for (CubeData cubeData : cubeTempList) {
+            cubeData.getCubeView().setY(isFoundNeedToMove ? yArray.get(index) - latticeHeight : yArray.get(index));
+            cubeData.setY(isFoundNeedToMove ? yArray.get(index) - latticeHeight : yArray.get(index));
+            index++;
         }
 
         isCanMoveOrTurnCube = false;
@@ -498,7 +514,7 @@ public class GamePresenterImpl implements GamePresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(res -> {
-                    if (res >= 100){
+                    if (res >= 100) {
                         disposableCountingKeepPress.dispose();
                         startMovingCubeKeepLeft();
                     }
@@ -506,6 +522,7 @@ public class GamePresenterImpl implements GamePresenter {
         compositeDisposable.add(disposableCountingKeepPress);
 
     }
+
     @Override
     public void onRightPressDownListener() {
         pressDownTimeMillis = System.currentTimeMillis();
@@ -513,7 +530,7 @@ public class GamePresenterImpl implements GamePresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(res -> {
-                    if (res >= 100){
+                    if (res >= 100) {
                         disposableCountingKeepPress.dispose();
                         startMovingCubeKeepRight();
                     }
@@ -543,7 +560,10 @@ public class GamePresenterImpl implements GamePresenter {
             data.setX(data.getX() - latticeWidth);
         }
         moveSupportLine();
-        for (CubeData data : supportCubeList){
+        if (!SharedPreferTool.getInstance().isActiveSupportCube()) {
+            return;
+        }
+        for (CubeData data : supportCubeList) {
             data.getCubeView().setX(data.getX() - latticeWidth);
             data.setX(data.getX() - latticeWidth);
         }
@@ -551,8 +571,7 @@ public class GamePresenterImpl implements GamePresenter {
     }
 
     private void moveSupportCube() {
-
-        for (int i = 0 ; i < cubeTempList.size() ; i++){
+        for (int i = 0; i < cubeTempList.size(); i++) {
             supportCubeList.get(i).getCubeView().setX(cubeTempList.get(i).getX());
             supportCubeList.get(i).setX(cubeTempList.get(i).getX());
         }
@@ -565,7 +584,7 @@ public class GamePresenterImpl implements GamePresenter {
         for (CubeData data : cubeTempList) {
             for (CubeData cubeData : cubeDataList) {
                 if (data.getX() == cubeData.getX() && data.getY() < cubeData.getY()) {
-                    touchYList.add(new CompareY(cubeData.getY(), data.getY()));
+                    touchYList.add(new CompareY(cubeData.getY(), data.getY(), data.getX()));
                     break;
                 }
             }
@@ -574,7 +593,7 @@ public class GamePresenterImpl implements GamePresenter {
         float compareHeight = 0;
         for (CompareY data : touchYList) {
             if (compareY == null) {
-                compareY = new CompareY(data.getExistingCubeY(), data.getCubeY());
+                compareY = new CompareY(data.getExistingCubeY(), data.getCubeY(), data.getCubeX());
                 compareHeight = data.getExistingCubeY() - data.getCubeY();
                 continue;
             }
@@ -588,16 +607,25 @@ public class GamePresenterImpl implements GamePresenter {
             moveSupportCubeToBottom();
             return;
         }
+
         int moveSpace = (int) ((compareY.getExistingCubeY() - latticeHeight - compareY.getCubeY()) / latticeHeight);
         ArrayList<Float> moveYArray = new ArrayList<>();
         for (CubeData cubeData : cubeTempList) {
             moveYArray.add(cubeData.getY() + (latticeHeight * moveSpace));
         }
         int index = 0;
-        for (CubeData cubeData : supportCubeList){
-            cubeData.getCubeView().setY(moveYArray.get(index));
-            cubeData.setY(moveYArray.get(index));
-            index ++;
+        boolean isFoundNeedToMove = false;
+        for (Float y : moveYArray) {
+            if (y > gameViewBottomY) {
+                isFoundNeedToMove = true;
+            }
+            index++;
+        }
+        index = 0;
+        for (CubeData cubeData : supportCubeList) {
+            cubeData.getCubeView().setY(isFoundNeedToMove ? moveYArray.get(index) - latticeHeight : moveYArray.get(index));
+            cubeData.setY(isFoundNeedToMove ? moveYArray.get(index) - latticeHeight : moveYArray.get(index));
+            index++;
         }
     }
 
@@ -626,9 +654,7 @@ public class GamePresenterImpl implements GamePresenter {
         disposableKeepMoving = Observable.interval(100, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(timeMillis -> {
-                    moveCubeSingleRight();
-                });
+                .subscribe(timeMillis -> moveCubeSingleRight());
         compositeDisposable.add(disposableKeepMoving);
     }
 
@@ -643,7 +669,10 @@ public class GamePresenterImpl implements GamePresenter {
             data.getCubeView().setX(data.getX() + latticeWidth);
             data.setX(data.getX() + latticeWidth);
         }
-        for (CubeData data : supportCubeList){
+        if (!SharedPreferTool.getInstance().isActiveSupportCube()) {
+            return;
+        }
+        for (CubeData data : supportCubeList) {
             data.getCubeView().setX(data.getX() + latticeWidth);
             data.setX(data.getX() + latticeWidth);
         }
@@ -678,9 +707,7 @@ public class GamePresenterImpl implements GamePresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnComplete(this::clearCurrentCube)
-                .subscribe(res ->{
-                    mView.removeSupportCube(res.getCubeView());
-                });
+                .forEach(data -> mView.removeSupportCube(data.getCubeView()));
         compositeDisposable.add(disposableAll);
 
 
@@ -691,13 +718,12 @@ public class GamePresenterImpl implements GamePresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnComplete(this::clearAllDataAndRestart)
-                .subscribe(res ->{
-                    mView.removeSupportCube(res.getCubeView());
-                });
+                .forEach(data -> mView.removeSupportCube(data.getCubeView()));
         compositeDisposable.add(disposableCurrent);
 
     }
-    private void clearAllDataAndRestart(){
+
+    private void clearAllDataAndRestart() {
         removeAllSupportCube();
         cubeDataList.clear();
         cubeTempList.clear();
@@ -711,8 +737,9 @@ public class GamePresenterImpl implements GamePresenter {
         mView.closePage();
     }
 
-    private CubeData createView(CubeData cubeData) {
-        return null;
+    @Override
+    public void onBackPressedListener() {
+        mView.showConfirmExitDialog();
     }
 
     private void cubeToBottom() {
@@ -751,8 +778,8 @@ public class GamePresenterImpl implements GamePresenter {
         for (CubeData cubeData : cubeTempList) {
             yArray.add(cubeData.getY() + latticeHeight * moveSpace);
         }
-        
-        for (int i = 0 ; i < yArray.size() ; i++){
+
+        for (int i = 0; i < yArray.size(); i++) {
             supportCubeList.get(i).getCubeView().setY(yArray.get(i));
             supportCubeList.get(i).setY(yArray.get(i));
         }
@@ -1019,16 +1046,19 @@ public class GamePresenterImpl implements GamePresenter {
     }
 
     private void removeAllSupportCube() {
-        if (supportCubeList == null){
+        if (supportCubeList == null) {
             return;
         }
-        for (CubeData cubeData : supportCubeList){
+        for (CubeData cubeData : supportCubeList) {
             mView.removeSupportCube(cubeData.getCubeView());
         }
         supportCubeList.clear();
     }
 
     private void createSupportCube() {
+        if (!SharedPreferTool.getInstance().isActiveSupportCube()) {
+            return;
+        }
         if (cubeDataList.isEmpty()) {
             supportCubeToBottom();
             return;
@@ -1037,7 +1067,7 @@ public class GamePresenterImpl implements GamePresenter {
         for (CubeData data : supportCubeList) {
             for (CubeData cubeData : cubeDataList) {
                 if (data.getX() == cubeData.getX() && data.getY() < cubeData.getY()) {
-                    touchYList.add(new CompareY(cubeData.getY(), data.getY()));
+                    touchYList.add(new CompareY(cubeData.getY(), data.getY(), data.getX()));
                     break;
                 }
             }
@@ -1046,7 +1076,7 @@ public class GamePresenterImpl implements GamePresenter {
         float compareHeight = 0;
         for (CompareY data : touchYList) {
             if (compareY == null) {
-                compareY = new CompareY(data.getExistingCubeY(), data.getCubeY());
+                compareY = new CompareY(data.getExistingCubeY(), data.getCubeY(), data.getCubeX());
                 compareHeight = data.getExistingCubeY() - data.getCubeY();
                 continue;
             }
@@ -1060,15 +1090,32 @@ public class GamePresenterImpl implements GamePresenter {
             supportCubeToBottom();
             return;
         }
+
         int moveSpace = (int) ((compareY.getExistingCubeY() - latticeHeight - compareY.getCubeY()) / latticeHeight);
+
+        ArrayList<Float> yArray = new ArrayList<>();
+        for (CubeData cubeData : cubeTempList) {
+            yArray.add(cubeData.getY() + (latticeHeight * moveSpace));
+        }
+        int index = 0;
+        boolean isFoundNeedToMove = false;
+        for (Float y : yArray) {
+            if (y > gameViewBottomY) {
+                isFoundNeedToMove = true;
+                break;
+            }
+            index++;
+        }
+        index = 0;
         for (CubeData cubeData : supportCubeList) {
-            cubeData.setY(cubeData.getY() + (latticeHeight * moveSpace));
+            cubeData.setY(isFoundNeedToMove ? yArray.get(index) - latticeHeight : yArray.get(index));
             mView.showSupportCube(cubeData);
+            index++;
         }
     }
 
     private void createSupportLine() {
-        if (!isActiveSupport){
+        if (!isActiveSupportLine) {
             return;
         }
         float leftX = 0f;
@@ -1355,8 +1402,8 @@ public class GamePresenterImpl implements GamePresenter {
             }
         }
         if (!isCanMoveDown) {
-            cubeTempList.get(1).getCubeView().setY(CubeTool.getMainZ1Cube(cubeY, cubeTempList.get(index), latticeHeight, latticeWidth, index));
-            cubeTempList.get(1).setY(CubeTool.getMainZ1Cube(cubeY, cubeTempList.get(index), latticeHeight, latticeWidth, index));
+            cubeTempList.get(1).getCubeView().setY(CubeTool.getMainTCube(cubeY, cubeTempList.get(index), latticeHeight, latticeWidth, index));
+            cubeTempList.get(1).setY(CubeTool.getMainTCube(cubeY, cubeTempList.get(index), latticeHeight, latticeWidth, index));
 
             if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_T_WAY1) {
 
@@ -1388,7 +1435,7 @@ public class GamePresenterImpl implements GamePresenter {
             index = 0;
             for (CubeData cubeData : cubeTempList) {
                 if (data.getX() == cubeData.getX() && data.getY() == cubeData.getY() + latticeHeight) {
-                    if (cubeData.getCubeType() == CUBE_TURN_Z2_WAY1){
+                    if (cubeData.getCubeType() == CUBE_TURN_Z2_WAY1) {
                         MichaelLog.i("moving cube Y : " + cubeData.getY() + " cubeY : " + data.getY() + " index : " + index);
                     }
                     cubeY = data.getY() - latticeHeight;
@@ -1775,7 +1822,7 @@ public class GamePresenterImpl implements GamePresenter {
 
     private int getRandomCuteType() {
 //        return (int) (Math.random() * 2) + 3;
-//        return (int) (Math.random() * 7);
-        return CUBE_TYPE_L1;
+        return (int) (Math.random() * 7);
     }
+
 }

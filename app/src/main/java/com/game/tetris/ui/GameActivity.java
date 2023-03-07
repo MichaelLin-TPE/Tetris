@@ -9,14 +9,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Vibrator;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -26,6 +23,7 @@ import com.game.tetris.base.BaseActivity;
 import com.game.tetris.bean.CubeData;
 import com.game.tetris.bean.LatticeData;
 import com.game.tetris.dialog.GameOverDialog;
+import com.game.tetris.dialog.TetrisDialog;
 import com.game.tetris.service.MyMusicService;
 import com.game.tetris.tool.MusicTool;
 
@@ -36,8 +34,8 @@ public class GameActivity extends BaseActivity implements GameVu {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private TextView tvPoint;
     private View leftSupportLine, rightSupportLine;
-    private Intent serviceIntent;
-    private MyMusicService myMusicService;
+//    private Intent serviceIntent;
+//    private MyMusicService myMusicService;
     private final MusicTool musicTool = new MusicTool();
     private boolean isBound = false;
 
@@ -47,7 +45,11 @@ public class GameActivity extends BaseActivity implements GameVu {
         setContentView(R.layout.activity_main);
         initPresenter();
         initView();
+    }
 
+    @Override
+    public void onBackPressed() {
+        presenter.onBackPressedListener();
     }
 
     private void initPresenter() {
@@ -129,10 +131,10 @@ public class GameActivity extends BaseActivity implements GameVu {
     protected void onDestroy() {
         super.onDestroy();
         presenter.onDestroy();
-        if (isBound) {
-            unbindService(serviceConnection);
-            isBound = false;
-        }
+//        if (isBound) {
+//            unbindService(serviceConnection);
+//            isBound = false;
+//        }
 
 
         musicTool.onDestroy();
@@ -280,11 +282,12 @@ public class GameActivity extends BaseActivity implements GameVu {
     @Override
     public void startPlayBackgroundMusic() {
         MichaelLog.i("startPlayBackgroundMusic");
-        serviceIntent = new Intent(this, MyMusicService.class);
-        serviceIntent.putExtra("musicResourceId", R.raw.game_music);
-        startService(serviceIntent);
-
-        bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE);
+//        serviceIntent = new Intent(this, MyMusicService.class);
+//        serviceIntent.putExtra("musicResourceId", R.raw.game_music);
+//        startService(serviceIntent);
+//
+//        bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE);
+        musicTool.playSoundBackground(this);
     }
 
     @Override
@@ -319,29 +322,49 @@ public class GameActivity extends BaseActivity implements GameVu {
     }
 
     @Override
+    public void showConfirmExitDialog() {
+        TetrisDialog dialog = new TetrisDialog();
+        dialog.setContent(getString(R.string.confirm_exit), getString(R.string.cancel), getString(R.string.exit));
+        dialog.setOnTetrisDialogListener(new TetrisDialog.OnTetrisDialogListener() {
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onPositiveButton() {
+                presenter.onExitClickListener();
+            }
+        });
+        dialog.show(getSupportFragmentManager(), "dialog");
+    }
+
+    @Override
     protected void onRestart() {
         super.onRestart();
-        myMusicService.restoreMusic();
+//        myMusicService.restoreMusic();
+        musicTool.restartMusic();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        myMusicService.pauseMusic();
+//        myMusicService.pauseMusic();
+        musicTool.pauseMusic();
     }
 
-    private final ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MyMusicService.LocalBinder binder = (MyMusicService.LocalBinder) service;
-            myMusicService = binder.getService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            myMusicService = null;
-        }
-    };
+//    private final ServiceConnection serviceConnection = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            MyMusicService.LocalBinder binder = (MyMusicService.LocalBinder) service;
+//            myMusicService = binder.getService();
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            myMusicService = null;
+//        }
+//    };
 
 
 }

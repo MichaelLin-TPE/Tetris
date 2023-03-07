@@ -4,12 +4,22 @@ public class CompareY {
 
     private float existingCubeY;
     private float cubeY;
+    private float cubeX;
+
+    public float getCubeX() {
+        return cubeX;
+    }
+
+    public void setCubeX(float cubeX) {
+        this.cubeX = cubeX;
+    }
 
     public CompareY(){}
 
-    public CompareY(float existingCubeY, float cubeY) {
+    public CompareY(float existingCubeY, float cubeY,float cubeX) {
         this.existingCubeY = existingCubeY;
         this.cubeY = cubeY;
+        this.cubeX = cubeX;
     }
 
     public float getExistingCubeY() {

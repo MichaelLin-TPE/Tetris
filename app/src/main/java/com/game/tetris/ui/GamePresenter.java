@@ -28,4 +28,6 @@ public interface GamePresenter {
     void onReplayClickListener();
 
     void onExitClickListener();
+
+    void onBackPressedListener();
 }

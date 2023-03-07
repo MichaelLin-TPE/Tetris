@@ -11,6 +11,16 @@ public class MusicTool {
 
     private MediaPlayer soundEffectPlayer;
     private MediaPlayer soundUpgradePlayer;
+    private MediaPlayer soundBackgroundPlayer;
+
+    public void playSoundBackground(Activity activity){
+        if (soundBackgroundPlayer == null){
+            soundBackgroundPlayer = MediaPlayer.create(activity,R.raw.game_music);
+            soundBackgroundPlayer.setVolume(0.6f,0.6f);
+            soundBackgroundPlayer.setLooping(true);
+        }
+        soundBackgroundPlayer.start();
+    }
 
     public void playSoundEffect(Activity activity) {
         if (soundEffectPlayer == null) {
@@ -38,6 +48,10 @@ public class MusicTool {
             soundUpgradePlayer.release();
             soundUpgradePlayer = null;
         }
+        if (soundBackgroundPlayer != null){
+            soundBackgroundPlayer.release();
+            soundBackgroundPlayer = null;
+        }
     }
 
     public void playUpgradeMusic(Activity activity) {
@@ -54,6 +68,18 @@ public class MusicTool {
         }
         if (!soundUpgradePlayer.isPlaying()) {
             soundUpgradePlayer.start();
+        }
+    }
+
+    public void restartMusic(){
+        if (soundBackgroundPlayer != null){
+            soundBackgroundPlayer.start();
+        }
+    }
+
+    public void pauseMusic() {
+        if (soundBackgroundPlayer != null){
+            soundBackgroundPlayer.pause();
         }
     }
 }
