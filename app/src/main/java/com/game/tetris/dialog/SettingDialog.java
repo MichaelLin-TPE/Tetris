@@ -1,7 +1,6 @@
 package com.game.tetris.dialog;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -14,20 +13,10 @@ import android.widget.CompoundButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
-import com.game.tetris.R;
-import com.game.tetris.custom.IntroFontTextView;
+import com.game.tetris.battle.R;
 import com.game.tetris.tool.SharedPreferTool;
-
-import java.util.concurrent.TimeUnit;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class SettingDialog extends DialogFragment {
 

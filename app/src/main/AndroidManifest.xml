@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.game.tetris">
+    package="com.game.tetris.battle">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.VIBRATE" />
     <application
-        android:name=".application.MyApplication"
+        android:name="com.game.tetris.application.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/app_logo"
         android:label="@string/app_name"
@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TetrisProject">
         <activity
-            android:name=".ui.welcome.WelcomeActivity"
+            android:name="com.game.tetris.ui.welcome.WelcomeActivity"
             android:exported="true"
             android:theme="@style/StartTheme">
             <intent-filter>
@@ -24,9 +24,9 @@
             </intent-filter>
 
         </activity>
-        <service android:name=".service.MyMusicService"/>
+        <service android:name="com.game.tetris.service.MyMusicService"/>
         <activity
-            android:name=".ui.GameActivity"
+            android:name="com.game.tetris.ui.GameActivity"
             android:exported="false">
         </activity>
     </application>

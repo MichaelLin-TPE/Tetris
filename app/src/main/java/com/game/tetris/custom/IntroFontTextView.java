@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 
-import com.game.tetris.R;
+import com.game.tetris.battle.R;
 
 public class IntroFontTextView extends androidx.appcompat.widget.AppCompatTextView {
 

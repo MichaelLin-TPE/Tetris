@@ -2,10 +2,8 @@ package com.game.tetris.tool;
 
 import android.app.Activity;
 import android.media.MediaPlayer;
-import android.util.Log;
 
-import com.game.tetris.MichaelLog;
-import com.game.tetris.R;
+import com.game.tetris.battle.R;
 
 public class MusicTool {
 
@@ -13,10 +11,10 @@ public class MusicTool {
     private MediaPlayer soundUpgradePlayer;
     private MediaPlayer soundBackgroundPlayer;
 
-    public void playSoundBackground(Activity activity){
-        if (soundBackgroundPlayer == null){
-            soundBackgroundPlayer = MediaPlayer.create(activity,R.raw.game_music);
-            soundBackgroundPlayer.setVolume(0.6f,0.6f);
+    public void playSoundBackground(Activity activity) {
+        if (soundBackgroundPlayer == null) {
+            soundBackgroundPlayer = MediaPlayer.create(activity, R.raw.game_music);
+            soundBackgroundPlayer.setVolume(0.6f, 0.6f);
             soundBackgroundPlayer.setLooping(true);
         }
         soundBackgroundPlayer.start();
@@ -48,7 +46,7 @@ public class MusicTool {
             soundUpgradePlayer.release();
             soundUpgradePlayer = null;
         }
-        if (soundBackgroundPlayer != null){
+        if (soundBackgroundPlayer != null) {
             soundBackgroundPlayer.release();
             soundBackgroundPlayer = null;
         }
@@ -71,14 +69,14 @@ public class MusicTool {
         }
     }
 
-    public void restartMusic(){
-        if (soundBackgroundPlayer != null){
+    public void restartMusic() {
+        if (soundBackgroundPlayer != null) {
             soundBackgroundPlayer.start();
         }
     }
 
     public void pauseMusic() {
-        if (soundBackgroundPlayer != null){
+        if (soundBackgroundPlayer != null) {
             soundBackgroundPlayer.pause();
         }
     }

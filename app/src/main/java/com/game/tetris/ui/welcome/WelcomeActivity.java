@@ -11,17 +11,15 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.game.tetris.R;
 import com.game.tetris.base.BaseActivity;
+import com.game.tetris.battle.R;
 import com.game.tetris.dialog.SettingDialog;
 import com.game.tetris.ui.GameActivity;
-
-import java.security.Signature;
 
 public class WelcomeActivity extends BaseActivity implements WelcomeVu {
 
     private WelcomePresenter presenter;
-    private TextView tvTitle,tvTapToStart;
+    private TextView tvTitle, tvTapToStart;
     private LinearLayout menuView;
 
     @Override
@@ -72,7 +70,7 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
 
     @Override
     public void startBreathAnimation() {
-        Animation animation = AnimationUtils.loadAnimation(this,R.anim.breath);
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.breath);
         tvTapToStart.startAnimation(animation);
     }
 
@@ -83,7 +81,7 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
 
     @Override
     public void startToMoveTitle() {
-        ObjectAnimator animator = ObjectAnimator.ofFloat(tvTitle,"translationY",-800f);
+        ObjectAnimator animator = ObjectAnimator.ofFloat(tvTitle, "translationY", -800f);
         animator.setDuration(1000);
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
@@ -103,7 +101,7 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
     @Override
     public void showMenu() {
         menuView.setVisibility(View.VISIBLE);
-        Animation animation = AnimationUtils.loadAnimation(this,R.anim.menu_show_animation);
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.menu_show_animation);
         menuView.startAnimation(animation);
     }
 
@@ -121,6 +119,6 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
     @Override
     public void showSettingDialog() {
         SettingDialog dialog = new SettingDialog();
-        dialog.show(getSupportFragmentManager(),"dialog");
+        dialog.show(getSupportFragmentManager(), "dialog");
     }
 }

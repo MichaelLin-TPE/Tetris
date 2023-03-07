@@ -1,9 +1,8 @@
 package com.game.tetris.tool;
 
-import android.util.Log;
 
 import com.game.tetris.MichaelLog;
-import com.game.tetris.R;
+import com.game.tetris.battle.R;
 import com.game.tetris.bean.CubeData;
 import com.game.tetris.bean.LatticeData;
 

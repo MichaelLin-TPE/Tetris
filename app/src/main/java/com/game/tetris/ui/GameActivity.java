@@ -18,8 +18,8 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.game.tetris.MichaelLog;
-import com.game.tetris.R;
 import com.game.tetris.base.BaseActivity;
+import com.game.tetris.battle.R;
 import com.game.tetris.bean.CubeData;
 import com.game.tetris.bean.LatticeData;
 import com.game.tetris.dialog.GameOverDialog;

@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.game.tetris.R;
+import com.game.tetris.battle.R;
 import com.game.tetris.custom.IntroFontTextView;
 
 import java.util.concurrent.TimeUnit;

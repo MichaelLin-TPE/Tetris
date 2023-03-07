@@ -30,7 +30,7 @@ import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.game.tetris.MichaelLog;
-import com.game.tetris.R;
+import com.game.tetris.battle.R;
 import com.game.tetris.bean.CompareY;
 import com.game.tetris.bean.CubeData;
 import com.game.tetris.bean.LatticeData;
@@ -248,9 +248,7 @@ public class GamePresenterImpl implements GamePresenter {
         }
 
         moveSupportLine();
-        if (!SharedPreferTool.getInstance().isActiveSupportCube()) {
-            return;
-        }
+
         moveSupportCube();
     }
 
@@ -560,9 +558,6 @@ public class GamePresenterImpl implements GamePresenter {
             data.setX(data.getX() - latticeWidth);
         }
         moveSupportLine();
-        if (!SharedPreferTool.getInstance().isActiveSupportCube()) {
-            return;
-        }
         for (CubeData data : supportCubeList) {
             data.getCubeView().setX(data.getX() - latticeWidth);
             data.setX(data.getX() - latticeWidth);
@@ -668,9 +663,6 @@ public class GamePresenterImpl implements GamePresenter {
         for (CubeData data : cubeTempList) {
             data.getCubeView().setX(data.getX() + latticeWidth);
             data.setX(data.getX() + latticeWidth);
-        }
-        if (!SharedPreferTool.getInstance().isActiveSupportCube()) {
-            return;
         }
         for (CubeData data : supportCubeList) {
             data.getCubeView().setX(data.getX() + latticeWidth);
@@ -1005,44 +997,49 @@ public class GamePresenterImpl implements GamePresenter {
         switch (currentCubeType) {
             case CUBE_TYPE_SQUIRE:
                 cubeTempList = CubeTool.getSquareCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
-                supportCubeList = CubeTool.getSquareCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
                 break;
             case CUBE_TYPE_LONG:
                 cubeTempList = CubeTool.getLongCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
-                supportCubeList = CubeTool.getLongCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
                 break;
             case CUBE_TYPE_L1:
                 cubeTempList = CubeTool.getLCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
-                supportCubeList = CubeTool.getLCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
                 break;
             case CUBE_TYPE_L2:
                 cubeTempList = CubeTool.getL2CubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
-                supportCubeList = CubeTool.getL2CubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
                 break;
             case CUBE_TYPE_T:
                 cubeTempList = CubeTool.getTCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
-                supportCubeList = CubeTool.getTCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
                 break;
             case CUBE_TYPE_Z:
                 cubeTempList = CubeTool.getZCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
-                supportCubeList = CubeTool.getZCubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
                 break;
             case CUBE_TYPE_Z2:
                 cubeTempList = CubeTool.getZ2CubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
-                supportCubeList = CubeTool.getZ2CubeData(currentCubeType, latticeDataList, latticeWidth, latticeHeight);
                 break;
         }
         for (CubeData data : cubeTempList) {
             mView.showCube(data);
         }
-        //此次產出的方塊往下降
-        makeCubeGoingDown();
-        //可以開始移動或是轉向
-        isCanMoveOrTurnCube = true;
+        supportCubeList = new ArrayList<>();
+        for (CubeData data : cubeTempList){
+            CubeData cubeData = new CubeData(data.getX(),data.getY(),getBackground(data),data.getCubeType(),data.getWidth(),data.getHeight(),data.getCubeTurnWay());
+            supportCubeList.add(cubeData);
+        }
         //輔助方塊
         createSupportCube();
         //輔助線
         createSupportLine();
+
+
+        //此次產出的方塊往下降
+        makeCubeGoingDown();
+        //可以開始移動或是轉向
+        isCanMoveOrTurnCube = true;
+
+    }
+
+    private int getBackground(CubeData data) {
+        return !SharedPreferTool.getInstance().isActiveSupportCube() ? 0 : data.getBg();
     }
 
     private void removeAllSupportCube() {
@@ -1056,9 +1053,6 @@ public class GamePresenterImpl implements GamePresenter {
     }
 
     private void createSupportCube() {
-        if (!SharedPreferTool.getInstance().isActiveSupportCube()) {
-            return;
-        }
         if (cubeDataList.isEmpty()) {
             supportCubeToBottom();
             return;
@@ -1187,93 +1181,24 @@ public class GamePresenterImpl implements GamePresenter {
         @Override
         public void run() {
             boolean isReachBottom = false;
+            int index = 0;
+            int sameLocationCount = 0;
             for (CubeData data : cubeTempList) {
-                if (data.getCubeType() == CUBE_TYPE_SQUIRE) {
-
-                    if (isSquareTouchBottom()) {
-                        isReachBottom = true;
-                        break;
-                    }
-                    if (!isCanSquareMoveDown()) {
-                        isReachBottom = true;
-                        break;
-                    }
-                    data.getCubeView().setY(data.getY() + latticeHeight);
-                    data.setY(data.getY() + latticeHeight);
-
-                } else if (data.getCubeType() == CUBE_TYPE_LONG) {
-
-                    if (isTouchBottom()) {
-                        isReachBottom = true;
-                        break;
-                    }
-                    if (!isCanLongMoveDown()) {
-                        isReachBottom = true;
-                        break;
-                    }
-                    data.getCubeView().setY(data.getY() + latticeHeight);
-                    data.setY(data.getY() + latticeHeight);
-
-                } else if (data.getCubeType() == CUBE_TYPE_L2) {
-                    if (isL2TouchBottom()) {
-                        isReachBottom = true;
-                        break;
-                    }
-                    if (!isCanL2MoveDown()) {
-                        isReachBottom = true;
-                        break;
-                    }
-                    data.getCubeView().setY(data.getY() + latticeHeight);
-                    data.setY(data.getY() + latticeHeight);
-
-                } else if (data.getCubeType() == CUBE_TYPE_L1) {
-                    if (isL1TouchBottom()) {
-                        isReachBottom = true;
-                        break;
-                    }
-                    if (!isCanL1MoveDown()) {
-                        isReachBottom = true;
-                        break;
-                    }
-                    data.getCubeView().setY(data.getY() + latticeHeight);
-                    data.setY(data.getY() + latticeHeight);
-
-                } else if (data.getCubeType() == CUBE_TYPE_Z) {
-
-                    if (isZ1TouchBottom()) {
-                        isReachBottom = true;
-                        break;
-                    }
-                    if (!isCanZ1MoveDown()) {
-                        isReachBottom = true;
-                        break;
-                    }
-                    data.getCubeView().setY(data.getY() + latticeHeight);
-                    data.setY(data.getY() + latticeHeight);
-
-                } else if (data.getCubeType() == CUBE_TYPE_Z2) {
-                    if (isZ2TouchBottom()) {
-                        isReachBottom = true;
-                        break;
-                    }
-                    if (!isCanZ2MoveDown()) {
-                        isReachBottom = true;
-                        break;
-                    }
-                    data.getCubeView().setY(data.getY() + latticeHeight);
-                    data.setY(data.getY() + latticeHeight);
-                } else if (data.getCubeType() == CUBE_TYPE_T) {
-                    if (isTTouchBottom()) {
-                        isReachBottom = true;
-                        break;
-                    }
-                    if (!isCanTMoveDown()) {
-                        isReachBottom = true;
-                        break;
-                    }
-                    data.getCubeView().setY(data.getY() + latticeHeight);
-                    data.setY(data.getY() + latticeHeight);
+                CubeData supportCube = supportCubeList.get(index);
+                if (supportCube.getX() == data.getX() && supportCube.getY() == data.getY()){
+                    sameLocationCount ++;
                 }
+                index ++;
+            }
+            if (sameLocationCount != 4){
+                MichaelLog.i("往下移動一格");
+                for (CubeData data : cubeTempList){
+                    data.setY(data.getY() + latticeHeight);
+                    data.getCubeView().setY(data.getY() + latticeHeight);
+                }
+            }else {
+                MichaelLog.i("已經不能在往下了");
+                isReachBottom = true;
             }
             boolean isGameOver = false;
             for (CubeData data : cubeTempList) {

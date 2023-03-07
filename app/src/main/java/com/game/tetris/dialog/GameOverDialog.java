@@ -8,19 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.game.tetris.R;
+import com.game.tetris.battle.R;
 import com.game.tetris.custom.IntroFontTextView;
 
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -34,9 +32,10 @@ public class GameOverDialog extends DialogFragment {
     private Disposable disposable;
     private OnGameOverDialogListener onGameOverDialogListener;
 
-    public void setOnGameOverDialogListener(OnGameOverDialogListener onGameOverDialogListener){
+    public void setOnGameOverDialogListener(OnGameOverDialogListener onGameOverDialogListener) {
         this.onGameOverDialogListener = onGameOverDialogListener;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -98,7 +97,7 @@ public class GameOverDialog extends DialogFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(res -> {
                     tvTitle.setText(title.substring(0, index++));
-                    if (index > title.length()){
+                    if (index > title.length()) {
                         disposable.dispose();
                     }
                 });
@@ -111,8 +110,9 @@ public class GameOverDialog extends DialogFragment {
         compositeDisposable.dispose();
     }
 
-    public interface OnGameOverDialogListener{
+    public interface OnGameOverDialogListener {
         void onRePlayClick();
+
         void onExitClick();
     }
 
