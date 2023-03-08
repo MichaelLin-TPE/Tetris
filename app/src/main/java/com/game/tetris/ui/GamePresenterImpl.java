@@ -27,7 +27,6 @@ import static com.game.tetris.tool.CubeTool.CUBE_TYPE_Z;
 import static com.game.tetris.tool.CubeTool.CUBE_TYPE_Z2;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import com.game.tetris.MichaelLog;
 import com.game.tetris.battle.R;
@@ -1021,8 +1020,8 @@ public class GamePresenterImpl implements GamePresenter {
             mView.showCube(data);
         }
         supportCubeList = new ArrayList<>();
-        for (CubeData data : cubeTempList){
-            CubeData cubeData = new CubeData(data.getX(),data.getY(),getBackground(data),data.getCubeType(),data.getWidth(),data.getHeight(),data.getCubeTurnWay());
+        for (CubeData data : cubeTempList) {
+            CubeData cubeData = new CubeData(data.getX(), data.getY(), getBackground(data), data.getCubeType(), data.getWidth(), data.getHeight(), data.getCubeTurnWay());
             supportCubeList.add(cubeData);
         }
         //輔助方塊
@@ -1174,7 +1173,7 @@ public class GamePresenterImpl implements GamePresenter {
 
 
     private void makeCubeGoingDown() {
-        mView.getHandler().post(goingDownRunnable);
+        mView.getHandler().postDelayed(goingDownRunnable,CUBE_DOWN_SPEED);
     }
 
     private final Runnable goingDownRunnable = new Runnable() {
@@ -1185,19 +1184,17 @@ public class GamePresenterImpl implements GamePresenter {
             int sameLocationCount = 0;
             for (CubeData data : cubeTempList) {
                 CubeData supportCube = supportCubeList.get(index);
-                if (supportCube.getX() == data.getX() && supportCube.getY() == data.getY()){
-                    sameLocationCount ++;
+                if (supportCube.getX() == data.getX() && supportCube.getY() == data.getY()) {
+                    sameLocationCount++;
                 }
-                index ++;
+                index++;
             }
-            if (sameLocationCount != 4){
-                MichaelLog.i("往下移動一格");
-                for (CubeData data : cubeTempList){
+            if (sameLocationCount != 4) {
+                for (CubeData data : cubeTempList) {
                     data.setY(data.getY() + latticeHeight);
-                    data.getCubeView().setY(data.getY() + latticeHeight);
+                    data.getCubeView().setY(data.getY());
                 }
-            }else {
-                MichaelLog.i("已經不能在往下了");
+            } else {
                 isReachBottom = true;
             }
             boolean isGameOver = false;
@@ -1218,348 +1215,12 @@ public class GamePresenterImpl implements GamePresenter {
                 cubeDataList.addAll(cubeTempList);
                 mView.getHandler().removeCallbacks(this);
                 checkNeedToRemoveLines();
-
             } else {
                 mView.getHandler().postDelayed(goingDownRunnable, CUBE_DOWN_SPEED);
                 moveSupportLine();
             }
         }
     };
-
-    private boolean isCanL1MoveDown() {
-        boolean isCanMoveDown = true;
-        float cubeY = 0;
-        int index = 0;
-        for (CubeData data : cubeDataList) {
-            index = 0;
-            for (CubeData cubeData : cubeTempList) {
-                if (data.getX() == cubeData.getX() && data.getY() == cubeData.getY() + latticeHeight) {
-                    cubeY = data.getY() - latticeHeight;
-                    isCanMoveDown = false;
-                    break;
-                }
-                index++;
-            }
-            if (!isCanMoveDown) {
-                break;
-            }
-        }
-        if (!isCanMoveDown) {
-            cubeTempList.get(1).getCubeView().setY(CubeTool.getMainL1Cube(cubeY, cubeTempList.get(index), latticeHeight, latticeWidth, index));
-            cubeTempList.get(1).setY(CubeTool.getMainL1Cube(cubeY, cubeTempList.get(index), latticeHeight, latticeWidth, index));
-
-            if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_L1_WAY1) {
-
-                CubeTool.getL1CTurnWay1(cubeTempList, latticeHeight, latticeWidth);
-
-            } else if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_L1_WAY2) {
-
-                CubeTool.getL1CTurnWay2(cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-
-            } else if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_L1_WAY3) {
-
-                CubeTool.getL1CTurnWay3(cubeTempList, latticeHeight, latticeWidth);
-
-            } else {
-
-                CubeTool.getL1CTurnWay4(cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-
-            }
-
-        }
-        return isCanMoveDown;
-    }
-
-
-    private boolean isCanZ1MoveDown() {
-        boolean isCanMoveDown = true;
-        float cubeY = 0;
-        int index = 0;
-        for (CubeData data : cubeDataList) {
-            index = 0;
-            for (CubeData cubeData : cubeTempList) {
-                if (data.getX() == cubeData.getX() && data.getY() == cubeData.getY() + latticeHeight) {
-                    cubeY = data.getY() - latticeHeight;
-                    isCanMoveDown = false;
-                    break;
-                }
-                index++;
-            }
-            if (!isCanMoveDown) {
-                break;
-            }
-        }
-        if (!isCanMoveDown) {
-            cubeTempList.get(3).getCubeView().setY(CubeTool.getMainZ1Cube(cubeY, cubeTempList.get(index), latticeHeight, latticeWidth, index));
-            cubeTempList.get(3).setY(CubeTool.getMainZ1Cube(cubeY, cubeTempList.get(index), latticeHeight, latticeWidth, index));
-
-            if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_Z1_WAY1) {
-
-                CubeTool.getZ1CTurnWay1(cubeTempList.get(3), cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-
-            } else if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_Z1_WAY2) {
-
-                CubeTool.getZ1CTurnWay2(cubeTempList.get(3), cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-
-            }
-
-        }
-        return isCanMoveDown;
-    }
-
-
-    private boolean isCanTMoveDown() {
-        boolean isCanMoveDown = true;
-        float cubeY = 0;
-        int index = 0;
-        for (CubeData data : cubeDataList) {
-            index = 0;
-            for (CubeData cubeData : cubeTempList) {
-                if (data.getX() == cubeData.getX() && data.getY() == cubeData.getY() + latticeHeight) {
-                    cubeY = data.getY() - latticeHeight;
-                    isCanMoveDown = false;
-                    break;
-                }
-                index++;
-            }
-            if (!isCanMoveDown) {
-                break;
-            }
-        }
-        if (!isCanMoveDown) {
-            cubeTempList.get(1).getCubeView().setY(CubeTool.getMainTCube(cubeY, cubeTempList.get(index), latticeHeight, latticeWidth, index));
-            cubeTempList.get(1).setY(CubeTool.getMainTCube(cubeY, cubeTempList.get(index), latticeHeight, latticeWidth, index));
-
-            if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_T_WAY1) {
-
-                CubeTool.getTTurnWay1(cubeTempList.get(1), cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-
-            } else if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_T_WAY2) {
-
-                CubeTool.getTTurnWay2(cubeTempList.get(1), cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-
-            } else if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_T_WAY3) {
-
-                CubeTool.getTTurnWay3(cubeTempList.get(1), cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-
-            } else if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_T_WAY4) {
-
-                CubeTool.getTTurnWay4(cubeTempList.get(1), cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-
-            }
-
-        }
-        return isCanMoveDown;
-    }
-
-    private boolean isCanZ2MoveDown() {
-        boolean isCanMoveDown = true;
-        float cubeY = 0;
-        int index = 0;
-        for (CubeData data : cubeDataList) {
-            index = 0;
-            for (CubeData cubeData : cubeTempList) {
-                if (data.getX() == cubeData.getX() && data.getY() == cubeData.getY() + latticeHeight) {
-                    if (cubeData.getCubeType() == CUBE_TURN_Z2_WAY1) {
-                        MichaelLog.i("moving cube Y : " + cubeData.getY() + " cubeY : " + data.getY() + " index : " + index);
-                    }
-                    cubeY = data.getY() - latticeHeight;
-                    isCanMoveDown = false;
-                    break;
-                }
-                index++;
-            }
-            if (!isCanMoveDown) {
-                break;
-            }
-        }
-        if (!isCanMoveDown) {
-            cubeTempList.get(3).getCubeView().setY(CubeTool.getMainZ2Cube(cubeY, cubeTempList.get(index), latticeHeight, latticeWidth, index));
-            cubeTempList.get(3).setY(CubeTool.getMainZ2Cube(cubeY, cubeTempList.get(index), latticeHeight, latticeWidth, index));
-
-            if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_Z2_WAY1) {
-
-                CubeTool.getZ2CTurnWay1(cubeTempList.get(3), cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-
-            } else if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_Z2_WAY2) {
-
-                CubeTool.getZ2CTurnWay2(cubeTempList.get(3), cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-
-            }
-
-        }
-        return isCanMoveDown;
-    }
-
-
-    private boolean isCanL2MoveDown() {
-        boolean isCanMoveDown = true;
-        float cubeY = 0;
-        int index = 0;
-        for (CubeData data : cubeDataList) {
-            index = 0;
-            for (CubeData cubeData : cubeTempList) {
-                if (data.getX() == cubeData.getX() && data.getY() == cubeData.getY() + latticeHeight) {
-                    cubeY = data.getY() - latticeHeight;
-                    isCanMoveDown = false;
-                    break;
-                }
-                index++;
-            }
-            if (!isCanMoveDown) {
-                break;
-            }
-        }
-        if (!isCanMoveDown) {
-            cubeTempList.get(1).getCubeView().setY(CubeTool.getMainL2Cube(cubeY, cubeTempList.get(index), latticeHeight, latticeWidth, index));
-            cubeTempList.get(1).setY(CubeTool.getMainL2Cube(cubeY, cubeTempList.get(index), latticeHeight, latticeWidth, index));
-            if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_L2_WAY1) {
-                CubeTool.getL2TurnWay1(cubeTempList, latticeHeight, latticeWidth);
-            } else if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_L2_WAY2) {
-                CubeTool.getL2TurnWay2(cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-            } else if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_L2_WAY3) {
-                CubeTool.getL2TurnWay3(cubeTempList, latticeHeight, latticeWidth);
-            } else {
-                CubeTool.getL2TurnWay4(cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-            }
-
-        }
-        return isCanMoveDown;
-    }
-
-    private boolean isL2TouchBottom() {
-
-        boolean isReachBottom = false;
-        for (CubeData data : cubeTempList) {
-            if ((data.getY() + latticeHeight) > gameViewBottomY) {
-                isReachBottom = true;
-                break;
-            }
-        }
-        if (isReachBottom) {
-            if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_L2_WAY1) {
-                cubeTempList.get(1).getCubeView().setY(gameViewBottomY);
-                cubeTempList.get(1).setY(gameViewBottomY);
-                CubeTool.getL2TurnWay1(cubeTempList, latticeHeight, latticeWidth);
-            } else if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_L2_WAY2) {
-                CubeTool.getL2TurnWay2(cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-            } else if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_L2_WAY3) {
-                CubeTool.getL2TurnWay3(cubeTempList, latticeHeight, latticeWidth);
-            } else {
-                CubeTool.getL2TurnWay4(cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-            }
-        }
-        return isReachBottom;
-    }
-
-    private boolean isL1TouchBottom() {
-
-        boolean isReachBottom = false;
-        for (CubeData data : cubeTempList) {
-            if ((data.getY() + latticeHeight) > gameViewBottomY) {
-                isReachBottom = true;
-                break;
-            }
-        }
-        if (isReachBottom) {
-            if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_L1_WAY1) {
-                cubeTempList.get(1).getCubeView().setY(gameViewBottomY);
-                cubeTempList.get(1).setY(gameViewBottomY);
-                CubeTool.getL1CTurnWay1(cubeTempList, latticeHeight, latticeWidth);
-            } else if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_L1_WAY2) {
-                cubeTempList.get(1).getCubeView().setY(gameViewBottomY - latticeHeight);
-                cubeTempList.get(1).setY(gameViewBottomY - latticeHeight);
-                CubeTool.getL1CTurnWay2(cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-
-            } else if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_L1_WAY3) {
-                cubeTempList.get(1).getCubeView().setY(gameViewBottomY);
-                cubeTempList.get(1).setY(gameViewBottomY);
-                CubeTool.getL1CTurnWay3(cubeTempList, latticeHeight, latticeWidth);
-            } else {
-                cubeTempList.get(1).getCubeView().setY(gameViewBottomY);
-                cubeTempList.get(1).setY(gameViewBottomY);
-                CubeTool.getL1CTurnWay4(cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-            }
-        }
-        return isReachBottom;
-    }
-
-    private boolean isZ1TouchBottom() {
-
-        boolean isReachBottom = false;
-        for (CubeData data : cubeTempList) {
-            if ((data.getY() + latticeHeight) > gameViewBottomY) {
-                isReachBottom = true;
-                break;
-            }
-        }
-        if (isReachBottom) {
-            if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_Z1_WAY1) {
-                cubeTempList.get(3).getCubeView().setY(gameViewBottomY - latticeHeight);
-                cubeTempList.get(3).setY(gameViewBottomY - latticeHeight);
-                CubeTool.getZ1CTurnWay1(cubeTempList.get(3), cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-            } else if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_Z1_WAY2) {
-                cubeTempList.get(3).getCubeView().setY(gameViewBottomY - latticeHeight);
-                cubeTempList.get(3).setY(gameViewBottomY - latticeHeight);
-                CubeTool.getZ1CTurnWay2(cubeTempList.get(3), cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-            }
-        }
-        return isReachBottom;
-    }
-
-    private boolean isZ2TouchBottom() {
-
-        boolean isReachBottom = false;
-        for (CubeData data : cubeTempList) {
-            if ((data.getY() + latticeHeight) > gameViewBottomY) {
-                isReachBottom = true;
-                break;
-            }
-        }
-        if (isReachBottom) {
-            if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_Z2_WAY1) {
-                cubeTempList.get(3).getCubeView().setY(gameViewBottomY - latticeHeight);
-                cubeTempList.get(3).setY(gameViewBottomY - latticeHeight);
-                CubeTool.getZ2CTurnWay1(cubeTempList.get(3), cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-            } else if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_Z2_WAY2) {
-                cubeTempList.get(3).getCubeView().setY(gameViewBottomY - latticeHeight);
-                cubeTempList.get(3).setY(gameViewBottomY - latticeHeight);
-                CubeTool.getZ2CTurnWay2(cubeTempList.get(3), cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-            }
-        }
-        return isReachBottom;
-    }
-
-    private boolean isTTouchBottom() {
-
-        boolean isReachBottom = false;
-        for (CubeData data : cubeTempList) {
-            if ((data.getY() + latticeHeight) > gameViewBottomY) {
-                isReachBottom = true;
-                break;
-            }
-        }
-        if (isReachBottom) {
-            if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_T_WAY1) {
-                cubeTempList.get(1).getCubeView().setY(gameViewBottomY);
-                cubeTempList.get(1).setY(gameViewBottomY);
-                CubeTool.getTTurnWay1(cubeTempList.get(1), cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-            } else if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_T_WAY2) {
-                cubeTempList.get(1).getCubeView().setY(gameViewBottomY - latticeHeight);
-                cubeTempList.get(1).setY(gameViewBottomY - latticeHeight);
-                CubeTool.getTTurnWay2(cubeTempList.get(1), cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-            } else if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_T_WAY3) {
-                cubeTempList.get(1).getCubeView().setY(gameViewBottomY - latticeHeight);
-                cubeTempList.get(1).setY(gameViewBottomY - latticeHeight);
-                CubeTool.getTTurnWay3(cubeTempList.get(1), cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-            } else {
-                cubeTempList.get(1).getCubeView().setY(gameViewBottomY - latticeHeight);
-                cubeTempList.get(1).setY(gameViewBottomY - latticeHeight);
-                CubeTool.getTTurnWay4(cubeTempList.get(1), cubeTempList, latticeHeight, latticeWidth, cubeDataList);
-            }
-        }
-        return isReachBottom;
-    }
 
     private void checkNeedToRemoveLines() {
         Collections.sort(cubeDataList);
@@ -1641,108 +1302,6 @@ public class GamePresenterImpl implements GamePresenter {
     }
 
 
-    private boolean isTouchBottom() {
-        boolean isReachBottom = false;
-        for (CubeData data : cubeTempList) {
-            if ((data.getY() + latticeHeight) > gameViewBottomY) {
-                isReachBottom = true;
-                break;
-            }
-        }
-        if (isReachBottom) {
-            if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_LONG_WAY1) {
-                for (CubeData data : cubeTempList) {
-                    if (data.getCubeTurnWay() == CUBE_TURN_LONG_WAY1) {
-                        data.setY(gameViewBottomY);
-                        data.getCubeView().setY(gameViewBottomY);
-                    }
-                }
-            } else {
-                float x = cubeTempList.get(1).getX();
-                for (int i = 0; i < cubeTempList.size(); i++) {
-                    CubeData data = cubeTempList.get(i);
-                    data.getCubeView().setY(gameViewBottomY - (latticeHeight * i));
-                    data.setY(gameViewBottomY - (latticeHeight * i));
-                    data.getCubeView().setX(x);
-                    data.setX(x);
-                }
-            }
-
-        }
-        return isReachBottom;
-    }
-
-
-    private boolean isSquareTouchBottom() {
-        boolean isReachBottom = false;
-        for (CubeData data : cubeTempList) {
-            if ((data.getY() + latticeHeight) > gameViewBottomY) {
-                isReachBottom = true;
-                break;
-            }
-        }
-        if (isReachBottom) {
-            CubeTool.getSquareCube(gameViewBottomY, cubeTempList, latticeHeight);
-        }
-        return isReachBottom;
-    }
-
-
-    private boolean isCanSquareMoveDown() {
-        boolean isCanMoveDown = true;
-        float cubeY = 0;
-        for (CubeData data : cubeDataList) {
-            for (CubeData cubeData : cubeTempList) {
-                if (data.getX() == cubeData.getX() && data.getY() == cubeData.getY() + latticeHeight) {
-                    cubeY = data.getY() - latticeHeight;
-                    isCanMoveDown = false;
-                    break;
-                }
-            }
-            if (!isCanMoveDown) {
-                break;
-            }
-        }
-        if (!isCanMoveDown) {
-            CubeTool.getSquareCube(cubeY, cubeTempList, latticeHeight);
-        }
-
-        return isCanMoveDown;
-    }
-
-    private boolean isCanLongMoveDown() {
-        boolean isCanMoveDown = true;
-        float cubeY = 0;
-        for (CubeData data : cubeDataList) {
-            for (CubeData cubeData : cubeTempList) {
-                if (data.getX() == cubeData.getX() && data.getY() == cubeData.getY() + latticeHeight) {
-                    cubeY = data.getY() - latticeHeight;
-                    isCanMoveDown = false;
-                    break;
-                }
-            }
-            if (!isCanMoveDown) {
-                break;
-            }
-        }
-        if (!isCanMoveDown) {
-            if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_LONG_WAY1) {
-                for (CubeData cubeData : cubeTempList) {
-                    cubeData.getCubeView().setY(cubeY);
-                    cubeData.setY(cubeY);
-                }
-            } else {
-                for (int i = 0; i < cubeTempList.size(); i++) {
-                    CubeData data = cubeTempList.get(i);
-                    data.getCubeView().setY(cubeY - (latticeHeight * i));
-                    data.setY(cubeY - (latticeHeight * i));
-                }
-            }
-
-        }
-
-        return isCanMoveDown;
-    }
 
 
     private int getRandomCuteType() {
