@@ -35,6 +35,7 @@ import com.game.tetris.bean.CubeData;
 import com.game.tetris.bean.LatticeData;
 import com.game.tetris.tool.CubeTool;
 import com.game.tetris.tool.SharedPreferTool;
+import com.game.tetris.tool.Tool;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1173,18 +1174,21 @@ public class GamePresenterImpl implements GamePresenter {
 
 
     private void makeCubeGoingDown() {
-        mView.getHandler().postDelayed(goingDownRunnable,CUBE_DOWN_SPEED);
+        mView.getHandler().post(goingDownRunnable);
     }
 
     private final Runnable goingDownRunnable = new Runnable() {
         @Override
         public void run() {
+            MichaelLog.i("bottomY : "+gameViewBottomY+" , latticeHeight : "+latticeHeight);
             boolean isReachBottom = false;
             int index = 0;
             int sameLocationCount = 0;
             for (CubeData data : cubeTempList) {
                 CubeData supportCube = supportCubeList.get(index);
-                if (supportCube.getX() == data.getX() && supportCube.getY() == data.getY()) {
+                MichaelLog.i("supportX : "+supportCube.getX() + " cubeX : "+data.getX() + " supportY : "+supportCube.getY() + " cubeY : "+data.getY());
+                if (Tool.convertToInt(supportCube.getX()) == Tool.convertToInt(data.getX()) &&
+                        Tool.convertToInt(supportCube.getY()) == Tool.convertToInt(data.getY())) {
                     sameLocationCount++;
                 }
                 index++;

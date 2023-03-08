@@ -10,4 +10,8 @@ public class Tool {
                 TypedValue.COMPLEX_UNIT_DIP, dp, MyApplication.instance.getApplicationContext().getResources().getDisplayMetrics()));
     }
 
+    public static int convertToInt(float value){
+        return (int)value;
+    }
+
 }
