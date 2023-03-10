@@ -48,4 +48,8 @@ public interface GameVu {
     void resetPoint();
 
     void showConfirmExitDialog();
+
+    void moveDownCube(View cubeView, CubeData cubeData,float y);
+
+    int getCurrentPoint();
 }

@@ -1,15 +1,10 @@
 package com.game.tetris.ui;
 
 import android.annotation.SuppressLint;
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +20,6 @@ import com.game.tetris.bean.CubeData;
 import com.game.tetris.bean.LatticeData;
 import com.game.tetris.dialog.GameOverDialog;
 import com.game.tetris.dialog.TetrisDialog;
-import com.game.tetris.service.MyMusicService;
 import com.game.tetris.tool.MusicTool;
 
 public class GameActivity extends BaseActivity implements GameVu {
@@ -35,7 +29,7 @@ public class GameActivity extends BaseActivity implements GameVu {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private TextView tvPoint;
     private View leftSupportLine, rightSupportLine;
-//    private Intent serviceIntent;
+    //    private Intent serviceIntent;
 //    private MyMusicService myMusicService;
     private final MusicTool musicTool = new MusicTool();
     private boolean isBound = false;
@@ -338,6 +332,22 @@ public class GameActivity extends BaseActivity implements GameVu {
             }
         });
         dialog.show(getSupportFragmentManager(), "dialog");
+    }
+
+    @Override
+    public void moveDownCube(View cubeView, CubeData cubeData, float y) {
+        cubeData.getCubeView().animate()
+                .y(y)
+                .setDuration(100)
+                .withEndAction(() -> {
+                    cubeData.getCubeView().setY(y);
+                    cubeData.setY(y);
+                }).start();
+    }
+
+    @Override
+    public int getCurrentPoint() {
+        return (int) tvPoint.getTag();
     }
 
     @Override

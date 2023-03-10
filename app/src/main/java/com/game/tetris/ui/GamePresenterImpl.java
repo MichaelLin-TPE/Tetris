@@ -59,7 +59,7 @@ public class GamePresenterImpl implements GamePresenter {
     private float latticeWidth, latticeHeight; // 格子的寬跟高
     private float gameViewBottomY, gameViewTopY, gameViewLeftX, gameViewRightX;
     private int currentCubeType;
-    private static final int CUBE_DOWN_SPEED = 500;
+    private static int CUBE_DOWN_SPEED = 500;
     private boolean isCanMoveOrTurnCube = false;
     private long pressDownTimeMillis = 0, pressUpTimeMillis = 0;
     private Disposable disposableKeepMoving; //控制左右按鈕按壓後的TIMER
@@ -82,8 +82,8 @@ public class GamePresenterImpl implements GamePresenter {
     public void createLatticeDataList(float x, float y, int right, int left, int bottom) {
         float gameViewX = x + 30;
         float gameViewY = y + 30;
-        latticeWidth = ((right - 30) - (left + 30)) / 10f;
-        latticeHeight = ((bottom - 30) - (y + 30)) / 20f;
+        latticeWidth = Tool.convertDoubleWithTwoPercent(((right - 30) - (left + 30)) / 10f);
+        latticeHeight = Tool.convertDoubleWithTwoPercent(((bottom - 30) - (y + 30)) / 20f);
 
         ArrayList<LatticeData> dataList = new ArrayList<>();
         for (int straight = 0; straight < 20; straight++) {
@@ -101,10 +101,10 @@ public class GamePresenterImpl implements GamePresenter {
         for (LatticeData data : latticeDataList) {
             mView.showLattice(data, latticeWidth, latticeHeight);
         }
-        gameViewBottomY = latticeDataList.get(latticeDataList.size() - 1).getY();
-        gameViewTopY = latticeDataList.get(0).getY();
-        gameViewLeftX = left + 30;
-        gameViewRightX = right - 30;
+        gameViewBottomY = Tool.convertDoubleWithTwoPercent(latticeDataList.get(latticeDataList.size() - 1).getY());
+        gameViewTopY = Tool.convertDoubleWithTwoPercent(latticeDataList.get(0).getY());
+        gameViewLeftX = Tool.convertDoubleWithTwoPercent(left + 30);
+        gameViewRightX = Tool.convertDoubleWithTwoPercent(right - 30);
         //開始產出方塊
         createCube();
 
@@ -481,7 +481,7 @@ public class GamePresenterImpl implements GamePresenter {
             cubeToBottom();
             return;
         }
-        int moveSpace = (int) ((compareY.getExistingCubeY() - latticeHeight - compareY.getCubeY()) / latticeHeight);
+        float moveSpace = Tool.convertDoubleWithTwoPercent(((compareY.getExistingCubeY() - latticeHeight - compareY.getCubeY()) / latticeHeight));
         ArrayList<Float> yArray = new ArrayList<>();
         for (CubeData cubeData : cubeTempList) {
             yArray.add(cubeData.getY() + (latticeHeight * moveSpace));
@@ -496,8 +496,7 @@ public class GamePresenterImpl implements GamePresenter {
         }
         index = 0;
         for (CubeData cubeData : cubeTempList) {
-            cubeData.getCubeView().setY(isFoundNeedToMove ? yArray.get(index) - latticeHeight : yArray.get(index));
-            cubeData.setY(isFoundNeedToMove ? yArray.get(index) - latticeHeight : yArray.get(index));
+            mView.moveDownCube(cubeData.getCubeView(),cubeData,isFoundNeedToMove ? yArray.get(index) - latticeHeight : yArray.get(index));
             index++;
         }
 
@@ -603,7 +602,7 @@ public class GamePresenterImpl implements GamePresenter {
             return;
         }
 
-        int moveSpace = (int) ((compareY.getExistingCubeY() - latticeHeight - compareY.getCubeY()) / latticeHeight);
+        float moveSpace = Tool.convertDoubleWithTwoPercent(((compareY.getExistingCubeY() - latticeHeight - compareY.getCubeY()) / latticeHeight));
         ArrayList<Float> moveYArray = new ArrayList<>();
         for (CubeData cubeData : cubeTempList) {
             moveYArray.add(cubeData.getY() + (latticeHeight * moveSpace));
@@ -746,12 +745,14 @@ public class GamePresenterImpl implements GamePresenter {
                 lastY = data.getY();
             }
         }
-        int moveSpace = (int) ((gameViewBottomY - lastY) / latticeHeight);
+        float moveSpace = Tool.convertDoubleWithTwoPercent(((gameViewBottomY - lastY) / latticeHeight));
         for (CubeData cubeData : cubeTempList) {
-            cubeData.getCubeView().setY(cubeData.getY() + latticeHeight * moveSpace);
-            cubeData.setY(cubeData.getY() + latticeHeight * moveSpace);
+            mView.moveDownCube(cubeData.getCubeView(),cubeData,cubeData.getY() + latticeHeight * moveSpace);
         }
     }
+
+
+
 
     private void moveSupportCubeToBottom() {
         //先取出最高的Y
@@ -765,7 +766,7 @@ public class GamePresenterImpl implements GamePresenter {
                 lastY = data.getY();
             }
         }
-        int moveSpace = (int) ((gameViewBottomY - lastY) / latticeHeight);
+        float moveSpace = Tool.convertDoubleWithTwoPercent(((gameViewBottomY - lastY) / latticeHeight));
         ArrayList<Float> yArray = new ArrayList<>();
         for (CubeData cubeData : cubeTempList) {
             yArray.add(cubeData.getY() + latticeHeight * moveSpace);
@@ -789,7 +790,7 @@ public class GamePresenterImpl implements GamePresenter {
                 lastY = data.getY();
             }
         }
-        int moveSpace = (int) ((gameViewBottomY - lastY) / latticeHeight);
+        float moveSpace = Tool.convertDoubleWithTwoPercent(((gameViewBottomY - lastY) / latticeHeight));
         for (CubeData cubeData : supportCubeList) {
             cubeData.setY(cubeData.getY() + latticeHeight * moveSpace);
             mView.showSupportCube(cubeData);
@@ -1027,8 +1028,8 @@ public class GamePresenterImpl implements GamePresenter {
         }
         //輔助方塊
         createSupportCube();
-        //輔助線
-        createSupportLine();
+        //輔助線 - 目前不會考慮
+//        createSupportLine();
 
 
         //此次產出的方塊往下降
@@ -1085,7 +1086,7 @@ public class GamePresenterImpl implements GamePresenter {
             return;
         }
 
-        int moveSpace = (int) ((compareY.getExistingCubeY() - latticeHeight - compareY.getCubeY()) / latticeHeight);
+        float moveSpace = Tool.convertDoubleWithTwoPercent(((compareY.getExistingCubeY() - latticeHeight - compareY.getCubeY()) / latticeHeight));
 
         ArrayList<Float> yArray = new ArrayList<>();
         for (CubeData cubeData : cubeTempList) {
@@ -1108,6 +1109,9 @@ public class GamePresenterImpl implements GamePresenter {
         }
     }
 
+    /**
+     * 目前不考慮輔助線
+     */
     private void createSupportLine() {
         if (!isActiveSupportLine) {
             return;
@@ -1180,15 +1184,14 @@ public class GamePresenterImpl implements GamePresenter {
     private final Runnable goingDownRunnable = new Runnable() {
         @Override
         public void run() {
-            MichaelLog.i("bottomY : "+gameViewBottomY+" , latticeHeight : "+latticeHeight);
+            MichaelLog.i("bottomY : " + gameViewBottomY + " , latticeHeight : " + latticeHeight);
             boolean isReachBottom = false;
             int index = 0;
             int sameLocationCount = 0;
             for (CubeData data : cubeTempList) {
                 CubeData supportCube = supportCubeList.get(index);
-                MichaelLog.i("supportX : "+supportCube.getX() + " cubeX : "+data.getX() + " supportY : "+supportCube.getY() + " cubeY : "+data.getY());
-                if (Tool.convertToInt(supportCube.getX()) == Tool.convertToInt(data.getX()) &&
-                        Tool.convertToInt(supportCube.getY()) == Tool.convertToInt(data.getY())) {
+                MichaelLog.i("supportX : " + supportCube.getX() + " cubeX : " + data.getX() + " supportY : " + supportCube.getY() + " cubeY : " + data.getY());
+                if (supportCube.getX() == data.getX() && supportCube.getY() == data.getY()) {
                     sameLocationCount++;
                 }
                 index++;
@@ -1239,7 +1242,6 @@ public class GamePresenterImpl implements GamePresenter {
                 removeData.add(data);
                 continue;
             }
-
             if (y == data.getY()) {
                 removeCount++;
                 removeData.add(data);
@@ -1288,7 +1290,14 @@ public class GamePresenterImpl implements GamePresenter {
         }
         mView.startPlayUpgradeMusic();
         mView.showPoint(removeLineCount * 1000);
-
+        //速度會越變越快
+        if (mView.getCurrentPoint() / 10000 == 0){
+            if (CUBE_DOWN_SPEED == 100){
+                MichaelLog.i("已經為最大速度");
+                return;
+            }
+            CUBE_DOWN_SPEED = CUBE_DOWN_SPEED - 50;
+        }
 
     }
 
@@ -1304,8 +1313,6 @@ public class GamePresenterImpl implements GamePresenter {
         createCube();
 
     }
-
-
 
 
     private int getRandomCuteType() {

@@ -4,6 +4,9 @@ import android.util.TypedValue;
 
 import com.game.tetris.application.MyApplication;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 public class Tool {
     public static int getDP(int dp){
         return Math.round(TypedValue.applyDimension(
@@ -14,4 +17,10 @@ public class Tool {
         return (int)value;
     }
 
+
+    public static float convertDoubleWithTwoPercent(float value){
+        DecimalFormat format = new DecimalFormat("#.##");
+        format.setRoundingMode(RoundingMode.DOWN);
+        return Float.parseFloat(format.format(value));
+    }
 }
