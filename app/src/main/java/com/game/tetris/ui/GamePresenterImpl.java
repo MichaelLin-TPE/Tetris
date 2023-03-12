@@ -27,6 +27,7 @@ import static com.game.tetris.tool.CubeTool.CUBE_TYPE_Z;
 import static com.game.tetris.tool.CubeTool.CUBE_TYPE_Z2;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import com.game.tetris.MichaelLog;
 import com.game.tetris.battle.R;
@@ -66,6 +67,7 @@ public class GamePresenterImpl implements GamePresenter {
     private Disposable disposableCountingKeepPress;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private boolean isActiveSupportLine = false;
+    private int currentPoint = 0;
 
     public GamePresenterImpl(GameVu mView) {
         this.mView = mView;
@@ -82,13 +84,19 @@ public class GamePresenterImpl implements GamePresenter {
     public void createLatticeDataList(float x, float y, int right, int left, int bottom) {
         float gameViewX = x + 30;
         float gameViewY = y + 30;
-        latticeWidth = Tool.convertDoubleWithTwoPercent(((right - 30) - (left + 30)) / 10f);
-        latticeHeight = Tool.convertDoubleWithTwoPercent(((bottom - 30) - (y + 30)) / 20f);
-
+        latticeWidth = Tool.convertDoubleWithoutPercent(((right - 30) - (left + 30)) / 10f);
+        latticeHeight = Tool.convertDoubleWithoutPercent(((bottom - 30) - (y + 30)) / 20f);
+        float compareY = 0;
         ArrayList<LatticeData> dataList = new ArrayList<>();
         for (int straight = 0; straight < 20; straight++) {
             for (int row = 0; row < 10; row++) {
-                dataList.add(new LatticeData(gameViewX + latticeWidth * row, gameViewY + (latticeHeight * straight),
+                if (compareY == 0) {
+                    compareY = gameViewY + (latticeHeight * straight);
+                } else {
+                    compareY = Math.abs(compareY - (gameViewY + (latticeHeight * straight))) < 5 ? compareY : gameViewY + (latticeHeight * straight);
+                }
+                MichaelLog.i("initView y : "+compareY + " x : " + (gameViewX + latticeWidth * row) +" straight : "+straight + " row : "+row);
+                dataList.add(new LatticeData(gameViewX + latticeWidth * row, compareY,
                         straight,
                         straight % 2 == 0 ?
                                 row % 2 == 0 ? R.drawable.lattice_bg : R.drawable.lattice_bg1 :
@@ -105,6 +113,7 @@ public class GamePresenterImpl implements GamePresenter {
         gameViewTopY = Tool.convertDoubleWithTwoPercent(latticeDataList.get(0).getY());
         gameViewLeftX = Tool.convertDoubleWithTwoPercent(left + 30);
         gameViewRightX = Tool.convertDoubleWithTwoPercent(right - 30);
+        MichaelLog.i("bottomY : "+gameViewBottomY);
         //開始產出方塊
         createCube();
 
@@ -457,7 +466,8 @@ public class GamePresenterImpl implements GamePresenter {
         ArrayList<CompareY> touchYList = new ArrayList<>();
         for (CubeData data : cubeTempList) {
             for (CubeData cubeData : cubeDataList) {
-                if (data.getX() == cubeData.getX() && data.getY() < cubeData.getY()) {
+                if (Math.abs(data.getX() - cubeData.getX()) < 50 && data.getY() < cubeData.getY()) {
+                    data.setX(cubeData.getX());
                     touchYList.add(new CompareY(cubeData.getY(), data.getY(), data.getX()));
                     break;
                 }
@@ -496,7 +506,7 @@ public class GamePresenterImpl implements GamePresenter {
         }
         index = 0;
         for (CubeData cubeData : cubeTempList) {
-            mView.moveDownCube(cubeData.getCubeView(),cubeData,isFoundNeedToMove ? yArray.get(index) - latticeHeight : yArray.get(index));
+            mView.moveDownCube(cubeData.getCubeView(), cubeData, isFoundNeedToMove ? yArray.get(index) - latticeHeight : yArray.get(index));
             index++;
         }
 
@@ -577,7 +587,7 @@ public class GamePresenterImpl implements GamePresenter {
         ArrayList<CompareY> touchYList = new ArrayList<>();
         for (CubeData data : cubeTempList) {
             for (CubeData cubeData : cubeDataList) {
-                if (data.getX() == cubeData.getX() && data.getY() < cubeData.getY()) {
+                if (Math.abs(data.getX() - cubeData.getX()) < 50 && data.getY() < cubeData.getY()) {
                     touchYList.add(new CompareY(cubeData.getY(), data.getY(), data.getX()));
                     break;
                 }
@@ -676,6 +686,7 @@ public class GamePresenterImpl implements GamePresenter {
     @Override
     public void onDestroy() {
         compositeDisposable.dispose();
+        mView.getHandler().removeCallbacks(goingDownRunnable);
     }
 
     @Override
@@ -747,11 +758,9 @@ public class GamePresenterImpl implements GamePresenter {
         }
         float moveSpace = Tool.convertDoubleWithTwoPercent(((gameViewBottomY - lastY) / latticeHeight));
         for (CubeData cubeData : cubeTempList) {
-            mView.moveDownCube(cubeData.getCubeView(),cubeData,cubeData.getY() + latticeHeight * moveSpace);
+            mView.moveDownCube(cubeData.getCubeView(), cubeData, cubeData.getY() + latticeHeight * moveSpace);
         }
     }
-
-
 
 
     private void moveSupportCubeToBottom() {
@@ -1061,7 +1070,7 @@ public class GamePresenterImpl implements GamePresenter {
         ArrayList<CompareY> touchYList = new ArrayList<>();
         for (CubeData data : supportCubeList) {
             for (CubeData cubeData : cubeDataList) {
-                if (data.getX() == cubeData.getX() && data.getY() < cubeData.getY()) {
+                if (Math.abs(data.getX() - cubeData.getX()) < 5 && data.getY() < cubeData.getY()) {
                     touchYList.add(new CompareY(cubeData.getY(), data.getY(), data.getX()));
                     break;
                 }
@@ -1190,8 +1199,9 @@ public class GamePresenterImpl implements GamePresenter {
             int sameLocationCount = 0;
             for (CubeData data : cubeTempList) {
                 CubeData supportCube = supportCubeList.get(index);
-                MichaelLog.i("supportX : " + supportCube.getX() + " cubeX : " + data.getX() + " supportY : " + supportCube.getY() + " cubeY : " + data.getY());
-                if (supportCube.getX() == data.getX() && supportCube.getY() == data.getY()) {
+                if (Math.abs(supportCube.getX() - data.getX()) < 5 && Math.abs(supportCube.getY() - data.getY()) < 5) {
+                    data.setX(supportCube.getX());
+                    data.setY(supportCube.getY());
                     sameLocationCount++;
                 }
                 index++;
@@ -1242,7 +1252,7 @@ public class GamePresenterImpl implements GamePresenter {
                 removeData.add(data);
                 continue;
             }
-            if (y == data.getY()) {
+            if (data.getY() == y) {
                 removeCount++;
                 removeData.add(data);
                 if (removeCount >= 9) {
@@ -1264,7 +1274,7 @@ public class GamePresenterImpl implements GamePresenter {
                 Iterator<CubeData> iterator = cubeDataList.iterator();
                 while (iterator.hasNext()) {
                     CubeData data = iterator.next();
-                    if (data.getY() == cubeData.getY()) {
+                    if (Math.abs(data.getY() - cubeData.getY()) < 5) {
                         isNeedToMove = true;
                         mView.getRootView().removeView(data.getCubeView());
                         iterator.remove();
@@ -1281,7 +1291,7 @@ public class GamePresenterImpl implements GamePresenter {
             }
         }
         if (isNeedToMove) {
-            startToMoveAllCube(removedYList);
+            startToMoveAllCube(removedYList, removeLineCount);
         } else {
             createCube();
         }
@@ -1291,18 +1301,25 @@ public class GamePresenterImpl implements GamePresenter {
         mView.startPlayUpgradeMusic();
         mView.showPoint(removeLineCount * 1000);
         //速度會越變越快
-        if (mView.getCurrentPoint() / 10000 == 0){
-            if (CUBE_DOWN_SPEED == 100){
+        if (currentPoint == 0){
+            currentPoint = mView.getCurrentPoint();
+        }
+
+        if (mView.getCurrentPoint() / 10000 == 0 && currentPoint != mView.getCurrentPoint()) {
+            if (CUBE_DOWN_SPEED == 100) {
                 MichaelLog.i("已經為最大速度");
                 return;
             }
+            MichaelLog.i("加速");
+            currentPoint = mView.getCurrentPoint();
             CUBE_DOWN_SPEED = CUBE_DOWN_SPEED - 50;
         }
 
     }
 
-    private void startToMoveAllCube(ArrayList<Float> removedYList) {
+    private void startToMoveAllCube(ArrayList<Float> removedYList, int removeLineCount) {
         for (Float y : removedYList) {
+            MichaelLog.i("need to remove Y : " + y);
             for (CubeData cubeData : cubeDataList) {
                 if (cubeData.getY() < y) {
                     cubeData.getCubeView().setY(cubeData.getY() + latticeHeight);
@@ -1317,7 +1334,8 @@ public class GamePresenterImpl implements GamePresenter {
 
     private int getRandomCuteType() {
 //        return (int) (Math.random() * 2) + 3;
-        return (int) (Math.random() * 7);
+//        return (int) (Math.random() * 7);
+        return CUBE_TYPE_LONG;
     }
 
 }

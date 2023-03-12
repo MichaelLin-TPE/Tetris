@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import com.game.tetris.MichaelLog;
 import com.game.tetris.base.BaseActivity;
@@ -180,6 +182,7 @@ public class GameActivity extends BaseActivity implements GameVu {
         rootView.addView(cubeView);
         data.setCubeView(cubeView);
         cubeView.setAlpha(0.4f);
+        MichaelLog.i("createSupport Y : "+data.getY());
     }
 
     @Override
@@ -200,7 +203,7 @@ public class GameActivity extends BaseActivity implements GameVu {
 
             @Override
             public void onExitClick() {
-                presenter.onExitClickListener();
+//                presenter.onExitClickListener();
             }
         });
 

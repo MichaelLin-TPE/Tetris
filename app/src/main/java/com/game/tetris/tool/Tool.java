@@ -23,4 +23,14 @@ public class Tool {
         format.setRoundingMode(RoundingMode.DOWN);
         return Float.parseFloat(format.format(value));
     }
+
+    public static float convertDoubleWithOnePercent(float value){
+        DecimalFormat format = new DecimalFormat("#.#");
+        format.setRoundingMode(RoundingMode.DOWN);
+        return Float.parseFloat(format.format(value));
+    }
+
+    public static float convertDoubleWithoutPercent(float value){
+        return (int)value;
+    }
 }

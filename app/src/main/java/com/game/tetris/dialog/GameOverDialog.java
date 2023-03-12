@@ -1,8 +1,10 @@
 package com.game.tetris.dialog;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,20 +76,35 @@ public class GameOverDialog extends DialogFragment {
         tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onGameOverDialogListener.onExitClick();
                 dismiss();
+                onGameOverDialogListener.onExitClick();
+
             }
         });
         tvPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onGameOverDialogListener.onRePlayClick();
                 dismiss();
+                onGameOverDialogListener.onRePlayClick();
+
             }
         });
 
         startAnimation();
 
+    }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (getActivity() != null && !getActivity().isFinishing()){
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    getActivity().finish();
+                }
+            }, 200);
+        }
     }
 
     private void startAnimation() {
