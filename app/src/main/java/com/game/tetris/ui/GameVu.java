@@ -41,7 +41,9 @@ public interface GameVu {
 
     void startVibrator(long timeMillis);
 
-    String getGameOverContent();
+    String getGameOverContentWithHistoryScore();
+    String getGameOverContentWithoutHistoryScore();
+    String getGameOverContentWithHighScore();
 
     void closePage();
 
@@ -52,4 +54,6 @@ public interface GameVu {
     void moveDownCube(View cubeView, CubeData cubeData,float y);
 
     int getCurrentPoint();
+
+    void savePoint();
 }

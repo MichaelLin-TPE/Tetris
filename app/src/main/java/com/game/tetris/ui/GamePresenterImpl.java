@@ -95,7 +95,7 @@ public class GamePresenterImpl implements GamePresenter {
                 } else {
                     compareY = Math.abs(compareY - (gameViewY + (latticeHeight * straight))) < 5 ? compareY : gameViewY + (latticeHeight * straight);
                 }
-                MichaelLog.i("initView y : "+compareY + " x : " + (gameViewX + latticeWidth * row) +" straight : "+straight + " row : "+row);
+                MichaelLog.i("initView y : " + compareY + " x : " + (gameViewX + latticeWidth * row) + " straight : " + straight + " row : " + row);
                 dataList.add(new LatticeData(gameViewX + latticeWidth * row, compareY,
                         straight,
                         straight % 2 == 0 ?
@@ -113,7 +113,7 @@ public class GamePresenterImpl implements GamePresenter {
         gameViewTopY = Tool.convertDoubleWithTwoPercent(latticeDataList.get(0).getY());
         gameViewLeftX = Tool.convertDoubleWithTwoPercent(left + 30);
         gameViewRightX = Tool.convertDoubleWithTwoPercent(right - 30);
-        MichaelLog.i("bottomY : "+gameViewBottomY);
+        MichaelLog.i("bottomY : " + gameViewBottomY);
         //開始產出方塊
         createCube();
 
@@ -1224,7 +1224,15 @@ public class GamePresenterImpl implements GamePresenter {
 
             if (isGameOver) {
                 mView.getHandler().removeCallbacks(this);
-                mView.showGameOver(mView.getGameOverContent());
+                if (SharedPreferTool.getInstance().getPoint() == 0) {
+                    mView.savePoint();
+                    mView.showGameOver(mView.getGameOverContentWithoutHistoryScore());
+                } else if (mView.getCurrentPoint() > SharedPreferTool.getInstance().getPoint()) {
+                    mView.savePoint();
+                    mView.showGameOver(mView.getGameOverContentWithHighScore());
+                } else {
+                    mView.showGameOver(mView.getGameOverContentWithHistoryScore());
+                }
                 return;
             }
 
@@ -1291,7 +1299,7 @@ public class GamePresenterImpl implements GamePresenter {
             }
         }
         if (isNeedToMove) {
-            startToMoveAllCube(removedYList, removeLineCount);
+            startToMoveAllCube(removedYList);
         } else {
             createCube();
         }
@@ -1301,31 +1309,29 @@ public class GamePresenterImpl implements GamePresenter {
         mView.startPlayUpgradeMusic();
         mView.showPoint(removeLineCount * 1000);
         //速度會越變越快
-        if (currentPoint == 0){
+        if (mView.getCurrentPoint() - currentPoint >= 5000 && mView.getCurrentPoint() - currentPoint != 0) {
             currentPoint = mView.getCurrentPoint();
+            int range = currentPoint / 5000;
+            CUBE_DOWN_SPEED = CUBE_DOWN_SPEED - (range - 50);
+            MichaelLog.i("speed range : " + range);
         }
-
-        if (mView.getCurrentPoint() / 10000 == 0 && currentPoint != mView.getCurrentPoint()) {
-            if (CUBE_DOWN_SPEED == 100) {
-                MichaelLog.i("已經為最大速度");
-                return;
-            }
-            MichaelLog.i("加速");
-            currentPoint = mView.getCurrentPoint();
-            CUBE_DOWN_SPEED = CUBE_DOWN_SPEED - 50;
-        }
-
     }
 
-    private void startToMoveAllCube(ArrayList<Float> removedYList, int removeLineCount) {
+    private void startToMoveAllCube(ArrayList<Float> removedYList) {
         for (Float y : removedYList) {
             MichaelLog.i("need to remove Y : " + y);
             for (CubeData cubeData : cubeDataList) {
                 if (cubeData.getY() < y) {
-                    cubeData.getCubeView().setY(cubeData.getY() + latticeHeight);
                     cubeData.setY(cubeData.getY() + latticeHeight);
                 }
             }
+        }
+        for (CubeData cubeData : cubeDataList) {
+            cubeData.getCubeView().animate()
+                    .y(cubeData.getY())
+                    .setDuration(100)
+                    .withEndAction(() -> cubeData.getCubeView().setY(cubeData.getY()))
+                    .start();
         }
         createCube();
 
@@ -1334,8 +1340,8 @@ public class GamePresenterImpl implements GamePresenter {
 
     private int getRandomCuteType() {
 //        return (int) (Math.random() * 2) + 3;
-//        return (int) (Math.random() * 7);
-        return CUBE_TYPE_LONG;
+        return (int) (Math.random() * 7);
+//        return CUBE_TYPE_LONG;
     }
 
 }

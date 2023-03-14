@@ -11,6 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.game.tetris.MichaelLog;
 import com.game.tetris.base.BaseActivity;
 import com.game.tetris.battle.R;
 import com.game.tetris.dialog.SettingDialog;
@@ -81,16 +82,11 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
 
     @Override
     public void startToMoveTitle() {
-        ObjectAnimator animator = ObjectAnimator.ofFloat(tvTitle, "translationY", -800f);
-        animator.setDuration(1000);
-        animator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                presenter.onStartToShowMenu();
-            }
-        });
-        animator.start();
+        tvTitle.animate()
+                .y(menuView.getY() - tvTitle.getHeight())
+                .setDuration(500)
+                .withEndAction(()->presenter.onStartToShowMenu())
+                .start();
     }
 
     @Override

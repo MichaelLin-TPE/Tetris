@@ -35,4 +35,10 @@ public class SharedPreferTool {
         return getSharedPreferences().getBoolean("isActiveSupportCube",false);
     }
 
+    public void savePoint(int point) {
+        getSharedPreferences().edit().putInt("point",point).apply();
+    }
+    public int getPoint(){
+        return getSharedPreferences().getInt("point",0);
+    }
 }

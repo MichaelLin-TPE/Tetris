@@ -32,6 +32,7 @@ public class GameOverDialog extends DialogFragment {
     private IntroFontTextView tvTitle;
     private int index = 0;
     private Disposable disposable;
+    private boolean isNeedFinish;
     private OnGameOverDialogListener onGameOverDialogListener;
 
     public void setOnGameOverDialogListener(OnGameOverDialogListener onGameOverDialogListener) {
@@ -63,7 +64,7 @@ public class GameOverDialog extends DialogFragment {
         wlp.width = Math.round(TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, 300, getActivity().getResources().getDisplayMetrics()));
         wlp.height = Math.round(TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 225, getActivity().getResources().getDisplayMetrics()));
+                TypedValue.COMPLEX_UNIT_DIP, 275, getActivity().getResources().getDisplayMetrics()));
         setCancelable(false);
         return dialog;
     }
@@ -76,16 +77,15 @@ public class GameOverDialog extends DialogFragment {
         tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dismiss();
                 onGameOverDialogListener.onExitClick();
-
+                dismiss();
             }
         });
         tvPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dismiss();
                 onGameOverDialogListener.onRePlayClick();
+                dismiss();
 
             }
         });
@@ -94,18 +94,7 @@ public class GameOverDialog extends DialogFragment {
 
     }
 
-    @Override
-    public void onDismiss(@NonNull DialogInterface dialog) {
-        super.onDismiss(dialog);
-        if (getActivity() != null && !getActivity().isFinishing()){
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    getActivity().finish();
-                }
-            }, 200);
-        }
-    }
+
 
     private void startAnimation() {
 

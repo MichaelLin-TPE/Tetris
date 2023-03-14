@@ -8,7 +8,7 @@
     android:background="@drawable/game_bg"
     tools:context="com.game.tetris.ui.GameActivity">
 
-    <TextView
+    <com.game.tetris.custom.IntroFontTextView
         android:id="@+id/point"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="@id/game_view"
