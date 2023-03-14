@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 
 import com.game.tetris.MichaelLog;
 import com.game.tetris.base.BaseActivity;
@@ -362,13 +360,18 @@ public class GameActivity extends BaseActivity implements GameVu {
     }
 
     @Override
-    public void moveDownCube(View cubeView, CubeData cubeData, float y) {
+    public void moveDownCube(View cubeView, CubeData cubeData, float y, int index, int lastIndex) {
         cubeData.getCubeView().animate()
                 .y(y)
                 .setDuration(100)
                 .withEndAction(() -> {
                     cubeData.getCubeView().setY(y);
                     cubeData.setY(y);
+                    MichaelLog.i("cube down animation index : "+index);
+                    if (index == lastIndex){
+                        presenter.onFinishCubeStraightDown();
+                    }
+
                 }).start();
     }
 

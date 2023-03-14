@@ -26,6 +26,7 @@
         </activity>
         <service android:name="com.game.tetris.service.MyMusicService"/>
         <activity
+            android:theme="@style/StartTheme"
             android:name="com.game.tetris.ui.GameActivity"
             android:exported="false">
         </activity>

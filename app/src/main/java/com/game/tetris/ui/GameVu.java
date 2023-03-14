@@ -51,7 +51,7 @@ public interface GameVu {
 
     void showConfirmExitDialog();
 
-    void moveDownCube(View cubeView, CubeData cubeData,float y);
+    void moveDownCube(View cubeView, CubeData cubeData, float y, int index, int lastIndex);
 
     int getCurrentPoint();
 

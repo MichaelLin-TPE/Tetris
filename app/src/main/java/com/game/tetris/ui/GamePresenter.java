@@ -18,7 +18,8 @@ public interface GamePresenter {
     void onLeftPressUpListener();
 
     void onRightPressDownListener();
-    
+
+    void onFinishCubeStraightDown();
 
     void onDestroy();
 
@@ -30,4 +31,6 @@ public interface GamePresenter {
     void onExitClickListener();
 
     void onBackPressedListener();
+
+
 }

@@ -27,7 +27,6 @@ import static com.game.tetris.tool.CubeTool.CUBE_TYPE_Z;
 import static com.game.tetris.tool.CubeTool.CUBE_TYPE_Z2;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import com.game.tetris.MichaelLog;
 import com.game.tetris.battle.R;
@@ -456,7 +455,7 @@ public class GamePresenterImpl implements GamePresenter {
         if (!isCanMoveOrTurnCube) {
             return;
         }
-
+        mView.getHandler().removeCallbacks(goingDownRunnable);
         mView.startPlayMoveMusic();
         mView.startVibrator(100);
         if (cubeDataList.isEmpty()) {
@@ -506,12 +505,26 @@ public class GamePresenterImpl implements GamePresenter {
         }
         index = 0;
         for (CubeData cubeData : cubeTempList) {
-            mView.moveDownCube(cubeData.getCubeView(), cubeData, isFoundNeedToMove ? yArray.get(index) - latticeHeight : yArray.get(index));
+            mView.moveDownCube(cubeData.getCubeView(), cubeData, isFoundNeedToMove ? yArray.get(index) - latticeHeight : yArray.get(index),index,cubeTempList.size() - 1);
             index++;
         }
-
+        MichaelLog.i("Cube straight down");
         isCanMoveOrTurnCube = false;
+
+
+
     }
+
+    @Override
+    public void onFinishCubeStraightDown() {
+        MichaelLog.i("onFinishCubeStraightDown");
+        checkRemoveLine();
+    }
+    private void checkRemoveLine(){
+        cubeDataList.addAll(cubeTempList);
+        checkNeedToRemoveLines();
+    }
+
 
     @SuppressLint("CheckResult")
     @Override
@@ -544,6 +557,8 @@ public class GamePresenterImpl implements GamePresenter {
                 });
         compositeDisposable.add(disposableCountingKeepPress);
     }
+
+
 
 
     @SuppressLint("CheckResult")
@@ -705,6 +720,7 @@ public class GamePresenterImpl implements GamePresenter {
 
     @Override
     public void onReplayClickListener() {
+        CUBE_DOWN_SPEED = 500;
         Disposable disposableAll = Observable.fromIterable(cubeDataList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -756,9 +772,11 @@ public class GamePresenterImpl implements GamePresenter {
                 lastY = data.getY();
             }
         }
+        int index = 0;
         float moveSpace = Tool.convertDoubleWithTwoPercent(((gameViewBottomY - lastY) / latticeHeight));
         for (CubeData cubeData : cubeTempList) {
-            mView.moveDownCube(cubeData.getCubeView(), cubeData, cubeData.getY() + latticeHeight * moveSpace);
+            mView.moveDownCube(cubeData.getCubeView(), cubeData, cubeData.getY() + latticeHeight * moveSpace, index, cubeTempList.size() - 1);
+            index ++;
         }
     }
 
@@ -1187,13 +1205,13 @@ public class GamePresenterImpl implements GamePresenter {
 
 
     private void makeCubeGoingDown() {
-        mView.getHandler().post(goingDownRunnable);
+        mView.getHandler().postDelayed(goingDownRunnable,CUBE_DOWN_SPEED);
     }
 
     private final Runnable goingDownRunnable = new Runnable() {
         @Override
         public void run() {
-            MichaelLog.i("bottomY : " + gameViewBottomY + " , latticeHeight : " + latticeHeight);
+            MichaelLog.i("開始往下移動");
             boolean isReachBottom = false;
             int index = 0;
             int sameLocationCount = 0;
@@ -1223,6 +1241,7 @@ public class GamePresenterImpl implements GamePresenter {
             }
 
             if (isGameOver) {
+                MichaelLog.i("game over");
                 mView.getHandler().removeCallbacks(this);
                 if (SharedPreferTool.getInstance().getPoint() == 0) {
                     mView.savePoint();
@@ -1241,6 +1260,7 @@ public class GamePresenterImpl implements GamePresenter {
                 mView.getHandler().removeCallbacks(this);
                 checkNeedToRemoveLines();
             } else {
+                mView.getHandler().removeCallbacks(this);
                 mView.getHandler().postDelayed(goingDownRunnable, CUBE_DOWN_SPEED);
                 moveSupportLine();
             }
@@ -1311,9 +1331,10 @@ public class GamePresenterImpl implements GamePresenter {
         //速度會越變越快
         if (mView.getCurrentPoint() - currentPoint >= 5000 && mView.getCurrentPoint() - currentPoint != 0) {
             currentPoint = mView.getCurrentPoint();
-            int range = currentPoint / 5000;
-            CUBE_DOWN_SPEED = CUBE_DOWN_SPEED - (range - 50);
-            MichaelLog.i("speed range : " + range);
+            CUBE_DOWN_SPEED = CUBE_DOWN_SPEED -  50;
+            if (CUBE_DOWN_SPEED <= 100){
+                CUBE_DOWN_SPEED = 100;
+            }
         }
     }
 
