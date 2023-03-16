@@ -41,4 +41,12 @@ public class SharedPreferTool {
     public int getPoint(){
         return getSharedPreferences().getInt("point",0);
     }
+
+    public boolean isActiveMusic() {
+        return getSharedPreferences().getBoolean("isActiveMusic",false);
+    }
+
+    public void saveActiveMusic(boolean isActive){
+        getSharedPreferences().edit().putBoolean("isActiveMusic",isActive).apply();
+    }
 }

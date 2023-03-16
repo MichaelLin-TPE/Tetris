@@ -32,11 +32,21 @@ public class WelcomePresenterImpl implements WelcomePresenter {
 
     @Override
     public void onPlayGameClickListener() {
-        mView.goToGamePage();
+        mView.showGameModeDialog();
     }
 
     @Override
     public void onSettingClickListener() {
         mView.showSettingDialog();
+    }
+
+    @Override
+    public void onLevelStartClick() {
+        mView.showToast();
+    }
+
+    @Override
+    public void onPractiseClick() {
+        mView.goToGamePage();
     }
 }

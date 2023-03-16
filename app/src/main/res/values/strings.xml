@@ -14,4 +14,8 @@
     <string name="cancel">Cancel</string>
     <string name="win_high_score">Brilliant!! New high score</string>
     <string name="imporve_yourself">\nYou imporve yourself</string>
+    <string name="music">Music</string>
+    <string name="level1">Level 1</string>
+    <string name="practise">Practise</string>
+    <string name="coming_soon">Coming Soon...</string>
 </resources>

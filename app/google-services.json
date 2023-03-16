@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "58187147571",
+    "project_id": "tetris-27ac1",
+    "storage_bucket": "tetris-27ac1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:58187147571:android:9656d8297c2a93a0a5b646",
+        "android_client_info": {
+          "package_name": "com.game.tetris.battle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "58187147571-g61lrck9ulbuai5ujmpfjp43jqva4ksd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.game.tetris.battle",
+            "certificate_hash": "3707e15c022c1b68f7334b6788d8069957a76d47"
+          }
+        },
+        {
+          "client_id": "58187147571-nktnl0dddedg0dtp6qvk511i9qgrj2vc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJer1rMJCkWtQHYm82Ae9pz-g-2Sw2iDk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "58187147571-nktnl0dddedg0dtp6qvk511i9qgrj2vc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -26,7 +26,7 @@
             android:thumb="@drawable/my_switch_thumb"
             app:track="@drawable/my_switch_track"
             android:layout_width="70dp"
-            android:layout_height="40dp"/>
+            android:layout_height="48dp"/>
 
 
 
@@ -42,6 +42,32 @@
             android:textColor="@color/white"
             android:text="@string/need_support_cube"
             android:layout_height="wrap_content"/>
+
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_music"
+            app:layout_constraintTop_toBottomOf="@id/switch_support_cube"
+            app:layout_constraintLeft_toLeftOf="@id/switch_support_cube"
+            android:checked="false"
+            android:textOff=""
+            android:textOn=""
+            android:thumb="@drawable/my_switch_thumb"
+            app:track="@drawable/my_switch_track"
+            android:layout_width="70dp"
+            android:layout_height="48dp"/>
+
+        <com.game.tetris.custom.IntroFontTextView
+            android:id="@+id/title1"
+            app:layout_constraintTop_toTopOf="@id/switch_music"
+            app:layout_constraintBottom_toBottomOf="@id/switch_music"
+            app:layout_constraintLeft_toLeftOf="@id/title"
+            android:layout_width="wrap_content"
+            android:textSize="18sp"
+            android:gravity="center|start"
+            android:textColor="@color/white"
+            android:text="@string/music"
+            android:layout_height="wrap_content"/>
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

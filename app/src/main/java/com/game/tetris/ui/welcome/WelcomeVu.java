@@ -16,4 +16,8 @@ public interface WelcomeVu {
     void goToGamePage();
 
     void showSettingDialog();
+
+    void showGameModeDialog();
+
+    void showToast();
 }

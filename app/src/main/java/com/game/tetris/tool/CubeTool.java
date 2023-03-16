@@ -521,7 +521,7 @@ public class CubeTool {
 
     }
 
-    public static void getZ1CTurnWay2(CubeData data, ArrayList<CubeData> cubeTempList, float latticeHeight, float latticeWidth, ArrayList<CubeData> cubeDataList) {
+    public static void getZ1CTurnWay2(CubeData data, ArrayList<CubeData> cubeTempList, float latticeHeight, float latticeWidth, ArrayList<CubeData> cubeDataList, float gameViewTopY) {
         //偵測若右邊方塊超出已經放置好的方塊來決定要移動幾格
         int moveSpace = 0;
         for (CubeData cubeData : cubeDataList) {
@@ -557,45 +557,57 @@ public class CubeTool {
 
     }
 
-    public static void getZ1CTurnWay1(CubeData data, ArrayList<CubeData> cubeTempList, float latticeHeight, float latticeWidth, ArrayList<CubeData> cubeDataList) {
+    public static void getZ1CTurnWay1(CubeData data, ArrayList<CubeData> cubeTempList, float latticeHeight, float latticeWidth, ArrayList<CubeData> cubeDataList, float gameViewTopY) {
 
-        cubeTempList.get(0).getCubeView().setY(data.getY() - latticeHeight);
+
+        float cubeY = data.getY() <= gameViewTopY ? data.getY() + latticeHeight : data.getY();
+        MichaelLog.i("cubeY : "+cubeY + " topY : "+gameViewTopY);
+        data.setY(cubeY);
+        data.getCubeView().setY(cubeY);
+
+
+        cubeTempList.get(0).getCubeView().setY(cubeY - latticeHeight);
         cubeTempList.get(0).getCubeView().setX(data.getX());
-        cubeTempList.get(0).setY(data.getY() - latticeHeight);
+        cubeTempList.get(0).setY(cubeY - latticeHeight);
         cubeTempList.get(0).setX(data.getX());
         cubeTempList.get(0).setCubeTurnWay(CUBE_TURN_Z1_WAY1);
 
-        cubeTempList.get(1).getCubeView().setY(data.getY());
+        cubeTempList.get(1).getCubeView().setY(cubeY);
         cubeTempList.get(1).getCubeView().setX(data.getX() - latticeWidth);
-        cubeTempList.get(1).setY(data.getY());
+        cubeTempList.get(1).setY(cubeY);
         cubeTempList.get(1).setX(data.getX() - latticeWidth);
         cubeTempList.get(1).setCubeTurnWay(CUBE_TURN_Z1_WAY1);
 
-        cubeTempList.get(2).getCubeView().setY(data.getY() + latticeHeight);
+        cubeTempList.get(2).getCubeView().setY(cubeY + latticeHeight);
         cubeTempList.get(2).getCubeView().setX(data.getX() - latticeWidth);
-        cubeTempList.get(2).setY(data.getY() + latticeHeight);
+        cubeTempList.get(2).setY(cubeY + latticeHeight);
         cubeTempList.get(2).setX(data.getX() - latticeWidth);
         cubeTempList.get(2).setCubeTurnWay(CUBE_TURN_Z1_WAY1);
 
     }
 
-    public static void getZ2CTurnWay1(CubeData data, ArrayList<CubeData> cubeTempList, float latticeHeight, float latticeWidth, ArrayList<CubeData> cubeDataList) {
+    public static void getZ2CTurnWay1(CubeData data, ArrayList<CubeData> cubeTempList, float latticeHeight, float latticeWidth, ArrayList<CubeData> cubeDataList, float gameViewTopY) {
 
-        cubeTempList.get(0).getCubeView().setY(data.getY() - latticeHeight);
+        float cubeY = data.getY() <= gameViewTopY ? data.getY() + latticeHeight : data.getY();
+        MichaelLog.i("cubeY : "+cubeY + " topY : "+gameViewTopY);
+        data.setY(cubeY);
+        data.getCubeView().setY(cubeY);
+
+        cubeTempList.get(0).getCubeView().setY(cubeY - latticeHeight);
         cubeTempList.get(0).getCubeView().setX(data.getX());
-        cubeTempList.get(0).setY(data.getY() - latticeHeight);
+        cubeTempList.get(0).setY(cubeY - latticeHeight);
         cubeTempList.get(0).setX(data.getX());
         cubeTempList.get(0).setCubeTurnWay(CUBE_TURN_Z2_WAY1);
 
-        cubeTempList.get(1).getCubeView().setY(data.getY());
+        cubeTempList.get(1).getCubeView().setY(cubeY);
         cubeTempList.get(1).getCubeView().setX(data.getX() + latticeWidth);
-        cubeTempList.get(1).setY(data.getY());
+        cubeTempList.get(1).setY(cubeY);
         cubeTempList.get(1).setX(data.getX() + latticeWidth);
         cubeTempList.get(1).setCubeTurnWay(CUBE_TURN_Z2_WAY1);
 
-        cubeTempList.get(2).getCubeView().setY(data.getY() + latticeHeight);
+        cubeTempList.get(2).getCubeView().setY(cubeY + latticeHeight);
         cubeTempList.get(2).getCubeView().setX(data.getX() + latticeWidth);
-        cubeTempList.get(2).setY(data.getY() + latticeHeight);
+        cubeTempList.get(2).setY(cubeY + latticeHeight);
         cubeTempList.get(2).setX(data.getX() + latticeWidth);
         cubeTempList.get(2).setCubeTurnWay(CUBE_TURN_Z2_WAY1);
 

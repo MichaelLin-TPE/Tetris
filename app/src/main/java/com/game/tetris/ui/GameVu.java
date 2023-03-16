@@ -56,4 +56,6 @@ public interface GameVu {
     int getCurrentPoint();
 
     void savePoint();
+
+    void showPreCube(int layoutId);
 }

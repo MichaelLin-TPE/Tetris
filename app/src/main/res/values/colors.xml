@@ -7,8 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="grey">#AAAAAA</color>
+    <color name="grey">#787676</color>
     <color name="button_stroke_color">#737171</color>
     <color name="my_switch_thumb_color">#F2B705</color>
     <color name="my_switch_track_color">#C4C4C4</color>
+    <color name="grey_pressed">#C0C0C0</color>
+    <color name="grey_focused">#E0E0E0</color>
+    <color name="white_grey">#F0F0F0</color>
 </resources>

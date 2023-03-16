@@ -10,10 +10,12 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.game.tetris.MichaelLog;
 import com.game.tetris.base.BaseActivity;
 import com.game.tetris.battle.R;
+import com.game.tetris.dialog.GameModeDialog;
 import com.game.tetris.dialog.SettingDialog;
 import com.game.tetris.ui.GameActivity;
 
@@ -116,5 +118,28 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
     public void showSettingDialog() {
         SettingDialog dialog = new SettingDialog();
         dialog.show(getSupportFragmentManager(), "dialog");
+    }
+
+    @Override
+    public void showGameModeDialog() {
+        GameModeDialog dialog = new GameModeDialog();
+        dialog.show(getSupportFragmentManager(),"dialog");
+        dialog.setOnGameModeItemClickListener(new GameModeDialog.OnGameModeItemClickListener() {
+            @Override
+            public void onLevelStart() {
+                presenter.onLevelStartClick();
+
+            }
+
+            @Override
+            public void onPractise() {
+                presenter.onPractiseClick();
+            }
+        });
+    }
+
+    @Override
+    public void showToast() {
+        Toast.makeText(this,getString(R.string.coming_soon),Toast.LENGTH_LONG).show();
     }
 }

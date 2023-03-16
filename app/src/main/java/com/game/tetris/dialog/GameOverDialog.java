@@ -62,9 +62,9 @@ public class GameOverDialog extends DialogFragment {
         Window window = dialog.getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
         wlp.width = Math.round(TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 300, getActivity().getResources().getDisplayMetrics()));
+                TypedValue.COMPLEX_UNIT_DIP, 320, getActivity().getResources().getDisplayMetrics()));
         wlp.height = Math.round(TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 275, getActivity().getResources().getDisplayMetrics()));
+                TypedValue.COMPLEX_UNIT_DIP, 300, getActivity().getResources().getDisplayMetrics()));
         setCancelable(false);
         return dialog;
     }

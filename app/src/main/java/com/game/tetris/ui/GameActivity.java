@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -23,6 +24,7 @@ import com.game.tetris.dialog.GameOverDialog;
 import com.game.tetris.dialog.TetrisDialog;
 import com.game.tetris.tool.MusicTool;
 import com.game.tetris.tool.SharedPreferTool;
+import com.game.tetris.tool.Tool;
 
 public class GameActivity extends BaseActivity implements GameVu {
 
@@ -34,12 +36,13 @@ public class GameActivity extends BaseActivity implements GameVu {
     //    private Intent serviceIntent;
 //    private MyMusicService myMusicService;
     private final MusicTool musicTool = new MusicTool();
+    private LinearLayout preView;
     private boolean isBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_game);
         initPresenter();
         initView();
     }
@@ -55,6 +58,7 @@ public class GameActivity extends BaseActivity implements GameVu {
 
     @SuppressLint("ClickableViewAccessibility")
     private void initView() {
+        preView = findViewById(R.id.pre_view);
         tvPoint = findViewById(R.id.point);
         tvPoint.setTag(0);
         gameView = findViewById(R.id.game_view);
@@ -67,10 +71,10 @@ public class GameActivity extends BaseActivity implements GameVu {
         });
 
         TextView tvTurn = findViewById(R.id.game_button);
-        ImageView ivLeft = findViewById(R.id.iv_left);
-        ImageView ivRight = findViewById(R.id.iv_right);
+        TextView ivLeft = findViewById(R.id.tv_left);
+        TextView ivRight = findViewById(R.id.tv_right);
         TextView tvDown = findViewById(R.id.down_button);
-        String point = getString(R.string.point) +" "+ tvPoint.getTag();
+        String point = getString(R.string.point) + " " + tvPoint.getTag();
         tvPoint.setText(point);
 
         tvDown.setOnClickListener(new View.OnClickListener() {
@@ -88,8 +92,10 @@ public class GameActivity extends BaseActivity implements GameVu {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         presenter.onLeftPressDownListener();
+                        ivLeft.setActivated(true);
                         break;
                     case MotionEvent.ACTION_UP:
+                        ivLeft.setActivated(false);
                         presenter.onLeftPressUpListener();
                         break;
                 }
@@ -104,9 +110,11 @@ public class GameActivity extends BaseActivity implements GameVu {
 
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        ivRight.setActivated(true);
                         presenter.onRightPressDownListener();
                         break;
                     case MotionEvent.ACTION_UP:
+                        ivRight.setActivated(false);
                         presenter.onRightPressUpListener();
                         break;
                 }
@@ -121,6 +129,7 @@ public class GameActivity extends BaseActivity implements GameVu {
                 presenter.onTurnCubeButtonClickListener();
             }
         });
+
     }
 
 
@@ -142,24 +151,30 @@ public class GameActivity extends BaseActivity implements GameVu {
         int[] location = new int[2];
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             gameView.getLocationInWindow(location);
-        }else{
+        } else {
             gameView.getLocationOnScreen(location);
         }
 
-        presenter.createLatticeDataList(location[0], location[1], location[0]+gameView.getWidth(), location[0], location[1]+gameView.getHeight());
+        presenter.createLatticeDataList(location[0], location[1], location[0] + gameView.getWidth(), location[0], location[1] + gameView.getHeight());
     }
 
     @Override
     public void showLattice(LatticeData data, float latticeSize, float latticeHeight) {
         View latticeView = View.inflate(this, R.layout.item_lattice_bg, null);
-        View lattice = latticeView.findViewById(R.id.lattice);
-//        lattice.setBackground(ContextCompat.getDrawable(this, data.getColor()));
-        ViewGroup.LayoutParams params = lattice.getLayoutParams();
-        params.height = (int) latticeSize;
-        params.width = (int) latticeHeight;
-        latticeView.setX(data.getX());
-        latticeView.setY(data.getY());
         rootView.addView(latticeView);
+
+        latticeView.post(() -> {
+            View lattice = latticeView.findViewById(R.id.lattice);
+//            lattice.setBackground(ContextCompat.getDrawable(this, data.getColor()));
+            int heightInPixels = Tool.convertToPixels(latticeHeight);
+            int widthInPixels = Tool.convertToPixels(latticeSize);
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) latticeView.getLayoutParams();
+            params.height = (int) latticeHeight;
+            params.width = (int) latticeSize;
+            latticeView.setX(data.getX());
+            latticeView.setY(data.getY());
+        });
+
     }
 
     @Override
@@ -189,7 +204,6 @@ public class GameActivity extends BaseActivity implements GameVu {
         rootView.addView(cubeView);
         data.setCubeView(cubeView);
         cubeView.setAlpha(0.4f);
-        MichaelLog.i("createSupport Y : "+data.getY());
     }
 
     @Override
@@ -199,7 +213,7 @@ public class GameActivity extends BaseActivity implements GameVu {
 
     @Override
     public void showGameOver(String title) {
-        if (isDestroyed()){
+        if (isDestroyed()) {
             return;
         }
         GameOverDialog dialog = new GameOverDialog();
@@ -316,7 +330,7 @@ public class GameActivity extends BaseActivity implements GameVu {
 
     @Override
     public String getGameOverContentWithHistoryScore() {
-        return getString(R.string.game_over) + " " + tvPoint.getTag()+getString(R.string.highest_score) + " "+SharedPreferTool.getInstance().getPoint();
+        return getString(R.string.game_over) + " " + tvPoint.getTag() + getString(R.string.highest_score) + " " + SharedPreferTool.getInstance().getPoint();
     }
 
     @Override
@@ -327,8 +341,8 @@ public class GameActivity extends BaseActivity implements GameVu {
     @Override
     public String getGameOverContentWithHighScore() {
         int originalPoint = SharedPreferTool.getInstance().getPoint();
-        return getString(R.string.win_high_score)+" "+getCurrentPoint()+getString(R.string.imporve_yourself) +
-                " "+(((getCurrentPoint() - originalPoint) / originalPoint ) * 100)+"%";
+        return getString(R.string.win_high_score) + " " + getCurrentPoint() + getString(R.string.imporve_yourself) +
+                " " + ((int) (((float) (getCurrentPoint() - originalPoint) / originalPoint) * 100)) + "%";
     }
 
     @Override
@@ -367,8 +381,7 @@ public class GameActivity extends BaseActivity implements GameVu {
                 .withEndAction(() -> {
                     cubeData.getCubeView().setY(y);
                     cubeData.setY(y);
-                    MichaelLog.i("cube down animation index : "+index);
-                    if (index == lastIndex){
+                    if (index == lastIndex) {
                         presenter.onFinishCubeStraightDown();
                     }
 
@@ -383,6 +396,13 @@ public class GameActivity extends BaseActivity implements GameVu {
     @Override
     public void savePoint() {
         SharedPreferTool.getInstance().savePoint((Integer) tvPoint.getTag());
+    }
+
+    @Override
+    public void showPreCube(int layoutId) {
+        preView.removeAllViews();
+        View view = View.inflate(this,layoutId,null);
+        preView.addView(view);
     }
 
     @Override

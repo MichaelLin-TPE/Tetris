@@ -1,5 +1,6 @@
 package com.game.tetris.tool;
 
+import android.content.res.Resources;
 import android.util.TypedValue;
 
 import com.game.tetris.application.MyApplication;
@@ -32,5 +33,14 @@ public class Tool {
 
     public static float convertDoubleWithoutPercent(float value){
         return (int)value;
+    }
+
+    public static int convertToPixels(float latticeHeight) {
+       return (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, latticeHeight, getResource().getDisplayMetrics());
+    }
+
+    private static Resources getResource(){
+        return MyApplication.instance.getResources();
     }
 }

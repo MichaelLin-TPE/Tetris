@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/cube1"
+        android:contentDescription="@null"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/cube_square_bg1"
+        android:layout_width="15dp"
+        android:layout_height="15dp"/>
+
+    <ImageView
+        android:id="@+id/cube2"
+        android:contentDescription="@null"
+        app:layout_constraintTop_toTopOf="@id/cube1"
+        app:layout_constraintLeft_toRightOf="@id/cube1"
+        android:scaleType="fitXY"
+        android:src="@drawable/cube_square_bg1"
+        android:layout_width="15dp"
+        android:layout_height="15dp"/>
+    <ImageView
+        android:id="@+id/cube3"
+        android:contentDescription="@null"
+        app:layout_constraintTop_toBottomOf="@id/cube1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/cube_square_bg1"
+        android:layout_width="15dp"
+        android:layout_height="15dp"/>
+
+    <ImageView
+        android:id="@+id/cube4"
+        android:contentDescription="@null"
+        app:layout_constraintLeft_toRightOf="@id/cube3"
+        app:layout_constraintTop_toBottomOf="@id/cube2"
+        android:scaleType="fitXY"
+        android:src="@drawable/cube_square_bg1"
+        android:layout_width="15dp"
+        android:layout_height="15dp"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

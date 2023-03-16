@@ -12,4 +12,8 @@ public interface WelcomePresenter {
     void onPlayGameClickListener();
 
     void onSettingClickListener();
+
+    void onLevelStartClick();
+
+    void onPractiseClick();
 }
