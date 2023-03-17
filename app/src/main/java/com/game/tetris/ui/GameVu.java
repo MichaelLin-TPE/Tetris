@@ -58,4 +58,6 @@ public interface GameVu {
     void savePoint();
 
     void showPreCube(int layoutId);
+
+    void moveCube(CubeData cubeData, int index, int lastIndex);
 }

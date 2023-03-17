@@ -506,61 +506,13 @@ public class GamePresenterImpl implements GamePresenter {
         mView.getHandler().removeCallbacks(goingDownRunnable);
         mView.startPlayMoveMusic();
         mView.startVibrator(100);
-        if (cubeDataList.isEmpty()) {
-            cubeToBottom();
-            return;
-        }
-        ArrayList<CompareY> touchYList = new ArrayList<>();
-        for (CubeData data : cubeTempList) {
-            for (CubeData cubeData : cubeDataList) {
-                if (Math.abs(data.getX() - cubeData.getX()) < 50 && data.getY() < cubeData.getY()) {
-                    data.setX(cubeData.getX());
-                    touchYList.add(new CompareY(cubeData.getY(), data.getY(), data.getX()));
-                    break;
-                }
-            }
-        }
-        CompareY compareY = null;
-        float compareHeight = 0;
-        for (CompareY data : touchYList) {
-            if (compareY == null) {
-                compareY = new CompareY(data.getExistingCubeY(), data.getCubeY(), data.getCubeX());
-                compareHeight = data.getExistingCubeY() - data.getCubeY();
-                continue;
-            }
-            if (compareHeight > data.getExistingCubeY() - data.getCubeY()) {
-                compareY.setExistingCubeY(data.getExistingCubeY());
-                compareY.setCubeY(data.getCubeY());
-                compareHeight = compareY.getExistingCubeY() - compareY.getCubeY();
-            }
-        }
-        if (compareY == null) {
-            cubeToBottom();
-            return;
-        }
-        float moveSpace = Tool.convertDoubleWithTwoPercent(((compareY.getExistingCubeY() - latticeHeight - compareY.getCubeY()) / latticeHeight));
-        ArrayList<Float> yArray = new ArrayList<>();
-        for (CubeData cubeData : cubeTempList) {
-            yArray.add(cubeData.getY() + (latticeHeight * moveSpace));
-        }
         int index = 0;
-        boolean isFoundNeedToMove = false;
-        for (Float y : yArray) {
-            if (y > gameViewBottomY) {
-                isFoundNeedToMove = true;
-            }
-            index++;
-        }
-        index = 0;
         for (CubeData cubeData : cubeTempList) {
-            mView.moveDownCube(cubeData.getCubeView(), cubeData, isFoundNeedToMove ? yArray.get(index) - latticeHeight : yArray.get(index),index,cubeTempList.size() - 1);
+            mView.moveDownCube(cubeData.getCubeView(), cubeData, supportCubeList.get(index).getY() , index,cubeTempList.size() - 1);
             index++;
         }
         MichaelLog.i("Cube straight down");
         isCanMoveOrTurnCube = false;
-
-
-
     }
 
     @Override
@@ -689,10 +641,26 @@ public class GamePresenterImpl implements GamePresenter {
         }
         index = 0;
         for (CubeData cubeData : supportCubeList) {
-            cubeData.getCubeView().setY(isFoundNeedToMove ? moveYArray.get(index) - latticeHeight : moveYArray.get(index));
             cubeData.setY(isFoundNeedToMove ? moveYArray.get(index) - latticeHeight : moveYArray.get(index));
             index++;
         }
+        float y = 0f;
+        for (CubeData cubeData : supportCubeList){
+            if (y == 0f){
+                y = cubeData.getY();
+                continue;
+            }
+            if (Math.abs(y - cubeData.getY()) < 10){
+                cubeData.setY(y);
+            }else {
+                y = cubeData.getY();
+            }
+        }
+        for (CubeData cubeData : supportCubeList){
+            cubeData.getCubeView().setY(cubeData.getY());
+        }
+
+
     }
 
     private boolean isClick() {
@@ -805,6 +773,30 @@ public class GamePresenterImpl implements GamePresenter {
     @Override
     public void onBackPressedListener() {
         mView.showConfirmExitDialog();
+    }
+
+    @Override
+    public void reCreateCube() {
+        arrangeAllCube();
+        createCube();
+    }
+
+    private void arrangeAllCube() {
+        float y = 0f;
+        for (CubeData cubeData : cubeDataList){
+            if (y == 0f){
+                y = cubeData.getY();
+                MichaelLog.i("allCubeY : "+y);
+                continue;
+            }
+            if (Math.abs(y - cubeData.getY()) < 10){
+                cubeData.setY(y);
+                cubeData.getCubeView().setY(y);
+            }else {
+                y = cubeData.getY();
+            }
+            MichaelLog.i("allCubeY : "+y);
+        }
     }
 
     private void cubeToBottom() {
@@ -1150,14 +1142,6 @@ public class GamePresenterImpl implements GamePresenter {
         }
         //輔助方塊
         createSupportCube();
-        //輔助線 - 目前不會考慮
-//        createSupportLine();
-
-        for (CubeData data : cubeTempList) {
-            MichaelLog.i("還沒往下移動的Y : "+data.getY() + " topY : "+gameViewTopY + " 每一個高 : "+latticeHeight);
-        }
-
-
 
         //此次產出的方塊往下降
         makeCubeGoingDown();
@@ -1257,8 +1241,23 @@ public class GamePresenterImpl implements GamePresenter {
         index = 0;
         for (CubeData cubeData : supportCubeList) {
             cubeData.setY(isFoundNeedToMove ? yArray.get(index) - latticeHeight : yArray.get(index));
-            mView.showSupportCube(cubeData);
+//            mView.showSupportCube(cubeData);
             index++;
+        }
+        float y = 0f;
+        for (CubeData cubeData : supportCubeList){
+            if (y == 0f){
+                y = cubeData.getY();
+                continue;
+            }
+            if (Math.abs(y - cubeData.getY()) < 10){
+                cubeData.setY(y);
+            }else {
+                y = cubeData.getY();
+            }
+        }
+        for (CubeData cubeData : supportCubeList){
+            mView.showSupportCube(cubeData);
         }
     }
 
@@ -1383,12 +1382,11 @@ public class GamePresenterImpl implements GamePresenter {
                 return;
             }
 
+            mView.getHandler().removeCallbacks(this);
             if (isReachBottom) {
                 cubeDataList.addAll(cubeTempList);
-                mView.getHandler().removeCallbacks(this);
                 checkNeedToRemoveLines();
             } else {
-                mView.getHandler().removeCallbacks(this);
                 mView.getHandler().postDelayed(goingDownRunnable, CUBE_DOWN_SPEED);
                 moveSupportLine();
             }
@@ -1407,7 +1405,22 @@ public class GamePresenterImpl implements GamePresenter {
 
     private void checkNeedToRemoveLines() {
         Collections.sort(cubeDataList);
-        float y = 0;
+        float y = 0f;
+        for (CubeData cubeData : cubeDataList){
+            if (y == 0f){
+                y = cubeData.getY();
+                MichaelLog.i("allCubeY : "+y);
+                continue;
+            }
+            if (Math.abs(y - cubeData.getY()) < 10){
+                cubeData.setY(y);
+                cubeData.getCubeView().setY(y);
+            }else {
+                y = cubeData.getY();
+            }
+            MichaelLog.i("allCubeY : "+y);
+        }
+        y = 0;
         int removeCount = 0;
         ArrayList<CubeData> removeData = new ArrayList<>();
         ArrayList<ArrayList<CubeData>> allRemoveData = new ArrayList<>();
@@ -1485,14 +1498,12 @@ public class GamePresenterImpl implements GamePresenter {
                 }
             }
         }
+        int index = 0;
         for (CubeData cubeData : cubeDataList) {
-            cubeData.getCubeView().animate()
-                    .y(cubeData.getY())
-                    .setDuration(100)
-                    .withEndAction(() -> cubeData.getCubeView().setY(cubeData.getY()))
-                    .start();
+            mView.moveCube(cubeData,index,cubeDataList.size() - 1);
+            index ++;
         }
-        createCube();
+
 
     }
 

@@ -32,5 +32,5 @@ public interface GamePresenter {
 
     void onBackPressedListener();
 
-
+    void reCreateCube();
 }

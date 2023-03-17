@@ -406,6 +406,19 @@ public class GameActivity extends BaseActivity implements GameVu {
     }
 
     @Override
+    public void moveCube(CubeData cubeData, int index, int lastIndex) {
+        cubeData.getCubeView().animate()
+                .y(cubeData.getY())
+                .setDuration(100)
+                .withEndAction(() -> {
+                    cubeData.getCubeView().setY(cubeData.getY());
+                    if (index == lastIndex) {
+                        presenter.reCreateCube();
+                    }
+                }).start();
+    }
+
+    @Override
     protected void onRestart() {
         super.onRestart();
 //        myMusicService.restoreMusic();
