@@ -1,8 +1,5 @@
 package com.game.tetris.ui.welcome;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,9 +9,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.game.tetris.MichaelLog;
 import com.game.tetris.base.BaseActivity;
 import com.game.tetris.battle.R;
+import com.game.tetris.dialog.DifficultyLevelDialog;
 import com.game.tetris.dialog.GameModeDialog;
 import com.game.tetris.dialog.SettingDialog;
 import com.game.tetris.ui.GameActivity;
@@ -109,8 +106,9 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
     }
 
     @Override
-    public void goToGamePage() {
+    public void goToGamePage(int mode) {
         Intent it = new Intent(this, GameActivity.class);
+        it.putExtra("mode",mode);
         startActivity(it);
     }
 
@@ -141,5 +139,17 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
     @Override
     public void showToast() {
         Toast.makeText(this,getString(R.string.coming_soon),Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void showDifficultyLeveDialog() {
+        DifficultyLevelDialog dialog = new DifficultyLevelDialog();
+        dialog.show(getSupportFragmentManager(),"dialog");
+        dialog.setOnDifficultyConfirmClickListener(new DifficultyLevelDialog.OnDifficultyConfirmClickListener() {
+            @Override
+            public void onConfirmClick() {
+                presenter.onConfirmGameLevelClickListener();
+            }
+        });
     }
 }

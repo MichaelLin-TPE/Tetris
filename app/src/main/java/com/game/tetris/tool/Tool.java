@@ -7,6 +7,8 @@ import com.game.tetris.application.MyApplication;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class Tool {
     public static int getDP(int dp){
@@ -18,6 +20,10 @@ public class Tool {
         return (int)value;
     }
 
+    public static String numberFormat(int point){
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault());
+        return numberFormat.format(point);
+    }
 
     public static float convertDoubleWithTwoPercent(float value){
         DecimalFormat format = new DecimalFormat("#.##");

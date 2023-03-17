@@ -1,5 +1,6 @@
 package com.game.tetris.ui;
 
+import static com.game.tetris.tool.CubeTool.ADVANCE_MODE_SPEED;
 import static com.game.tetris.tool.CubeTool.CUBE_TURN_L1_WAY1;
 import static com.game.tetris.tool.CubeTool.CUBE_TURN_L1_WAY2;
 import static com.game.tetris.tool.CubeTool.CUBE_TURN_L1_WAY3;
@@ -25,6 +26,12 @@ import static com.game.tetris.tool.CubeTool.CUBE_TYPE_SQUIRE;
 import static com.game.tetris.tool.CubeTool.CUBE_TYPE_T;
 import static com.game.tetris.tool.CubeTool.CUBE_TYPE_Z;
 import static com.game.tetris.tool.CubeTool.CUBE_TYPE_Z2;
+import static com.game.tetris.tool.CubeTool.EASY_MODE_SPEED;
+import static com.game.tetris.tool.CubeTool.EXPERT_MODE_SPEED;
+import static com.game.tetris.tool.CubeTool.HARD_MODE_SPEED;
+import static com.game.tetris.tool.CubeTool.LEVEL_MODE;
+import static com.game.tetris.tool.CubeTool.NORMAL_MODE_SPEED;
+import static com.game.tetris.tool.CubeTool.PRACTISE_MODE;
 
 import android.annotation.SuppressLint;
 
@@ -59,28 +66,39 @@ public class GamePresenterImpl implements GamePresenter {
     private float latticeWidth, latticeHeight; // 格子的寬跟高
     private float gameViewBottomY, gameViewTopY, gameViewLeftX, gameViewRightX;
     private int currentCubeType,nextCubeType = -1;
-    private int CUBE_DOWN_SPEED = 500;
+    private int CUBE_DOWN_SPEED = SharedPreferTool.getInstance().getGameSpeed();
     private boolean isCanMoveOrTurnCube = false;
     private long pressDownTimeMillis = 0, pressUpTimeMillis = 0;
     private Disposable disposableKeepMoving; //控制左右按鈕按壓後的TIMER
     private Disposable disposableCountingKeepPress;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
-    private boolean isActiveSupportLine = false;
+    private boolean isActiveSupportLine = false,isFinish = false;
     private int currentPoint = 0;
+    private int currentGameMode;
 
     public GamePresenterImpl(GameVu mView) {
         this.mView = mView;
     }
 
     @Override
-    public void onCreateGameView() {
+    public void onCreateGameView(int mode) {
 
+        currentGameMode = mode;
+        mView.showTargetView(currentGameMode == LEVEL_MODE);
         mView.createGameViewBackground();
 
         if (SharedPreferTool.getInstance().isActiveMusic()){
             mView.startPlayBackgroundMusic();
         }
 
+        if (currentGameMode == LEVEL_MODE){
+            mView.showTargetPoint(getTargetPoint());
+        }
+
+    }
+
+    private int getTargetPoint() {
+        return 5000 + (5000 * SharedPreferTool.getInstance().getGameLevel());
     }
 
     @Override
@@ -735,7 +753,6 @@ public class GamePresenterImpl implements GamePresenter {
 
     @Override
     public void onReplayClickListener() {
-        CUBE_DOWN_SPEED = 500;
         Disposable disposableAll = Observable.fromIterable(cubeDataList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -762,6 +779,7 @@ public class GamePresenterImpl implements GamePresenter {
         cubeTempList.clear();
         mView.resetPoint();
         mView.showPoint(0);
+        onCreateGameView(currentGameMode);
         createCube();
     }
 
@@ -1381,7 +1399,9 @@ public class GamePresenterImpl implements GamePresenter {
                 }
                 return;
             }
-
+            if (isFinish){
+                return;
+            }
             mView.getHandler().removeCallbacks(this);
             if (isReachBottom) {
                 cubeDataList.addAll(cubeTempList);
@@ -1478,15 +1498,41 @@ public class GamePresenterImpl implements GamePresenter {
             return;
         }
         mView.startPlayUpgradeMusic();
-        mView.showPoint(removeLineCount * 1000);
-        //速度會越變越快
-        if (mView.getCurrentPoint() - currentPoint >= 5000 && mView.getCurrentPoint() - currentPoint != 0) {
-            currentPoint = mView.getCurrentPoint();
-            CUBE_DOWN_SPEED = CUBE_DOWN_SPEED -  50;
-            if (CUBE_DOWN_SPEED <= 100){
-                CUBE_DOWN_SPEED = 100;
-            }
+        mView.showPoint(removeLineCount * getLevel());
+
+        if (mView.getCurrentPoint() >= getTargetPoint()){
+            isFinish = true;
+            mView.getHandler().removeCallbacks(goingDownRunnable);
+            mView.showWinLevelDialog();
+            SharedPreferTool.getInstance().setGameLevel(SharedPreferTool.getInstance().getGameLevel() + 1);
         }
+
+
+        //速度會越變越快
+//        if (mView.getCurrentPoint() - currentPoint >= 5000 && mView.getCurrentPoint() - currentPoint != 0) {
+//            currentPoint = mView.getCurrentPoint();
+//            CUBE_DOWN_SPEED = CUBE_DOWN_SPEED -  50;
+//            if (CUBE_DOWN_SPEED <= 100){
+//                CUBE_DOWN_SPEED = 100;
+//            }
+//        }
+    }
+
+    private int getLevel() {
+        switch (CUBE_DOWN_SPEED){
+            case EASY_MODE_SPEED:
+                return 1000;
+            case NORMAL_MODE_SPEED:
+                return 1100;
+            case HARD_MODE_SPEED:
+                return 1200;
+            case ADVANCE_MODE_SPEED:
+                return 1300;
+            case EXPERT_MODE_SPEED:
+                return 2000;
+        }
+
+        return 1000;
     }
 
     private void startToMoveAllCube(ArrayList<Float> removedYList) {

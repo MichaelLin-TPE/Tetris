@@ -53,7 +53,7 @@ public class GameModeDialog extends DialogFragment {
     private void initView(View view) {
         TextView tvLevel = view.findViewById(R.id.title1);
         TextView tvPractise = view.findViewById(R.id.title2);
-
+        tvLevel.setText(getString(R.string.level)+" "+SharedPreferTool.getInstance().getGameLevel());
         tvLevel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

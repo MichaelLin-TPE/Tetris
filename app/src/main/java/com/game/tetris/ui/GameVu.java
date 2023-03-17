@@ -60,4 +60,10 @@ public interface GameVu {
     void showPreCube(int layoutId);
 
     void moveCube(CubeData cubeData, int index, int lastIndex);
+
+    void showTargetView(boolean isShow);
+
+    void showTargetPoint(int targetPoint);
+
+    void showWinLevelDialog();
 }

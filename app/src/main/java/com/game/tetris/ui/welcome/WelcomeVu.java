@@ -13,11 +13,13 @@ public interface WelcomeVu {
 
     void finishApp();
 
-    void goToGamePage();
+    void goToGamePage(int mode);
 
     void showSettingDialog();
 
     void showGameModeDialog();
 
     void showToast();
+
+    void showDifficultyLeveDialog();
 }

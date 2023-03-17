@@ -1,9 +1,12 @@
 package com.game.tetris.ui.welcome;
 
+import static com.game.tetris.tool.CubeTool.LEVEL_MODE;
+import static com.game.tetris.tool.CubeTool.PRACTISE_MODE;
+
 public class WelcomePresenterImpl implements WelcomePresenter {
 
     private WelcomeVu mView;
-
+    private int mode;
     public WelcomePresenterImpl(WelcomeVu mView) {
         this.mView = mView;
     }
@@ -42,11 +45,18 @@ public class WelcomePresenterImpl implements WelcomePresenter {
 
     @Override
     public void onLevelStartClick() {
-        mView.showToast();
+        mode = LEVEL_MODE;
+        mView.showDifficultyLeveDialog();
     }
 
     @Override
     public void onPractiseClick() {
-        mView.goToGamePage();
+        mode = PRACTISE_MODE;
+        mView.showDifficultyLeveDialog();
+    }
+
+    @Override
+    public void onConfirmGameLevelClickListener() {
+        mView.goToGamePage(mode);
     }
 }

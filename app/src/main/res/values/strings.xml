@@ -18,4 +18,13 @@
     <string name="level1">Level 1</string>
     <string name="practise">Practise</string>
     <string name="coming_soon">Coming Soon...</string>
+    <string name="easy">Easy</string>
+    <string name="normal">Normal</string>
+    <string name="difficult">Hard</string>
+    <string name="advanced">advanced</string>
+    <string name="expert">expert</string>
+    <string name="confirm">Confirm</string>
+    <string name="level">LEVEL</string>
+    <string name="traget">Target :</string>
+    <string name="next_level">Next</string>
 </resources>

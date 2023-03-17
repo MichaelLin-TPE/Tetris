@@ -1,5 +1,7 @@
 package com.game.tetris.ui;
 
+import static com.game.tetris.tool.CubeTool.PRACTISE_MODE;
+
 import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,7 +33,7 @@ public class GameActivity extends BaseActivity implements GameVu {
     private GamePresenter presenter;
     private ConstraintLayout gameView, rootView;
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private TextView tvPoint;
+    private TextView tvPoint,tvTarget;
     private View leftSupportLine, rightSupportLine;
     //    private Intent serviceIntent;
 //    private MyMusicService myMusicService;
@@ -45,6 +47,12 @@ public class GameActivity extends BaseActivity implements GameVu {
         setContentView(R.layout.activity_game);
         initPresenter();
         initView();
+        gameView.post(new Runnable() {
+            @Override
+            public void run() {
+                presenter.onCreateGameView(getIntent().getExtras().getInt("mode",PRACTISE_MODE));
+            }
+        });
     }
 
     @Override
@@ -58,17 +66,13 @@ public class GameActivity extends BaseActivity implements GameVu {
 
     @SuppressLint("ClickableViewAccessibility")
     private void initView() {
+        tvTarget = findViewById(R.id.target);
         preView = findViewById(R.id.pre_view);
         tvPoint = findViewById(R.id.point);
         tvPoint.setTag(0);
         gameView = findViewById(R.id.game_view);
         rootView = findViewById(R.id.root);
-        gameView.post(new Runnable() {
-            @Override
-            public void run() {
-                presenter.onCreateGameView();
-            }
-        });
+
 
         TextView tvTurn = findViewById(R.id.game_button);
         TextView ivLeft = findViewById(R.id.tv_left);
@@ -240,7 +244,7 @@ public class GameActivity extends BaseActivity implements GameVu {
 
     @Override
     public void showPoint(int point) {
-        String pointContent = getString(R.string.point) + ((Integer) (tvPoint.getTag()) + point);
+        String pointContent = getString(R.string.point) + Tool.numberFormat(((Integer) (tvPoint.getTag()) + point));
         tvPoint.setText(pointContent);
         tvPoint.setTag((Integer) (tvPoint.getTag()) + point);
     }
@@ -340,9 +344,7 @@ public class GameActivity extends BaseActivity implements GameVu {
 
     @Override
     public String getGameOverContentWithHighScore() {
-        int originalPoint = SharedPreferTool.getInstance().getPoint();
-        return getString(R.string.win_high_score) + " " + getCurrentPoint() + getString(R.string.imporve_yourself) +
-                " " + ((int) (((float) (getCurrentPoint() - originalPoint) / originalPoint) * 100)) + "%";
+        return getString(R.string.win_high_score) + " " + getCurrentPoint();
     }
 
     @Override
@@ -357,9 +359,7 @@ public class GameActivity extends BaseActivity implements GameVu {
 
     @Override
     public void showConfirmExitDialog() {
-        TetrisDialog dialog = new TetrisDialog();
-        dialog.setContent(getString(R.string.confirm_exit), getString(R.string.cancel), getString(R.string.exit));
-        dialog.setOnTetrisDialogListener(new TetrisDialog.OnTetrisDialogListener() {
+        showTetrisDialog(getString(R.string.confirm_exit), getString(R.string.cancel), getString(R.string.exit), new TetrisDialog.OnTetrisDialogListener() {
             @Override
             public void onCancel() {
 
@@ -370,7 +370,7 @@ public class GameActivity extends BaseActivity implements GameVu {
                 presenter.onExitClickListener();
             }
         });
-        dialog.show(getSupportFragmentManager(), "dialog");
+
     }
 
     @Override
@@ -416,6 +416,32 @@ public class GameActivity extends BaseActivity implements GameVu {
                         presenter.reCreateCube();
                     }
                 }).start();
+    }
+
+    @Override
+    public void showTargetView(boolean isShow) {
+        tvTarget.setVisibility(isShow ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void showTargetPoint(int targetPoint) {
+        tvTarget.setText(getString(R.string.traget)+" "+Tool.convertToInt(targetPoint));
+    }
+
+    @Override
+    public void showWinLevelDialog() {
+        String content = "Congratulations!!\nYou have passed the "+SharedPreferTool.getInstance().getGameLevel()+" level!";
+        showTetrisDialog(content, getString(R.string.exit), getString(R.string.next_level), new TetrisDialog.OnTetrisDialogListener() {
+            @Override
+            public void onCancel() {
+                presenter.onExitClickListener();
+            }
+
+            @Override
+            public void onPositiveButton() {
+                presenter.onReplayClickListener();
+            }
+        });
     }
 
     @Override

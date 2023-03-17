@@ -44,6 +44,17 @@ public class CubeTool {
     public static final int CUBE_TURN_T_WAY3 = 3333;
     public static final int CUBE_TURN_T_WAY4 = 4444;
 
+
+    public static final int EASY_MODE_SPEED = 1500;
+    public static final int NORMAL_MODE_SPEED = 1000;
+    public static final int HARD_MODE_SPEED = 500;
+    public static final int ADVANCE_MODE_SPEED = 300;
+    public static final int EXPERT_MODE_SPEED = 100;
+
+    public static final int PRACTISE_MODE = 2222;
+    public static final int LEVEL_MODE = 3333;
+
+
     public static ArrayList<CubeData> getSquareCubeData(int currentCubeType, ArrayList<LatticeData> latticeDataList, float latticeWidth, float latticeHeight) {
         ArrayList<CubeData> data = new ArrayList<>();
         data.add(new CubeData(latticeDataList.get(4).getX(), latticeDataList.get(4).getY(), R.drawable.cube_square_bg1, currentCubeType, latticeWidth, latticeHeight, CUBE_TYPE_SQUIRE));
