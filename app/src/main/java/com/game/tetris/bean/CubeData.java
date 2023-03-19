@@ -12,8 +12,11 @@ public class CubeData implements Comparable<CubeData>{
     private float height;
     private View cubeView;
     private int cubeTurnWay;
+    private int row;
 
-    public CubeData(float x, float y, int bg, int cubeType,float width,float height,int cubeTurnWay) {
+    private boolean isHasChangeValue;
+
+    public CubeData(float x, float y, int bg, int cubeType,float width,float height,int cubeTurnWay,int row) {
         this.x = x;
         this.y = y;
         this.bg = bg;
@@ -21,6 +24,23 @@ public class CubeData implements Comparable<CubeData>{
         this.width = width;
         this.height = height;
         this.cubeTurnWay = cubeTurnWay;
+        this.row = row;
+    }
+
+    public boolean isHasChangeValue() {
+        return isHasChangeValue;
+    }
+
+    public void setHasChangeValue(boolean hasChangeValue) {
+        isHasChangeValue = hasChangeValue;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
     }
 
     public int getCubeTurnWay() {

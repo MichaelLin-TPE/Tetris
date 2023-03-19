@@ -1,5 +1,6 @@
 package com.game.tetris.ui;
 
+import static com.game.tetris.tool.CubeTool.LEVEL_MODE;
 import static com.game.tetris.tool.CubeTool.PRACTISE_MODE;
 
 import android.annotation.SuppressLint;
@@ -16,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import com.game.tetris.MichaelLog;
 import com.game.tetris.base.BaseActivity;
@@ -47,10 +49,12 @@ public class GameActivity extends BaseActivity implements GameVu {
         setContentView(R.layout.activity_game);
         initPresenter();
         initView();
+        int currentGameMode = getIntent().getExtras().getInt("mode",PRACTISE_MODE);
+        showTargetView(currentGameMode == LEVEL_MODE);
         gameView.post(new Runnable() {
             @Override
             public void run() {
-                presenter.onCreateGameView(getIntent().getExtras().getInt("mode",PRACTISE_MODE));
+                presenter.onCreateGameView(currentGameMode);
             }
         });
     }

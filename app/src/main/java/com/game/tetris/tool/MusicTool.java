@@ -24,13 +24,6 @@ public class MusicTool {
         if (soundEffectPlayer == null) {
             soundEffectPlayer = MediaPlayer.create(activity, R.raw.move_cube);
             soundEffectPlayer.setVolume(0.5f, 0.5f);
-            soundEffectPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    mediaPlayer.release();
-                    soundEffectPlayer = null;
-                }
-            });
         }
         if (!soundEffectPlayer.isPlaying()) {
             soundEffectPlayer.start();
@@ -56,13 +49,6 @@ public class MusicTool {
         if (soundUpgradePlayer == null) {
             soundUpgradePlayer = MediaPlayer.create(activity, R.raw.upgrade);
             soundUpgradePlayer.setVolume(0.5f, 0.5f);
-            soundUpgradePlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    mediaPlayer.release();
-                    soundUpgradePlayer = null;
-                }
-            });
         }
         if (!soundUpgradePlayer.isPlaying()) {
             soundUpgradePlayer.start();
