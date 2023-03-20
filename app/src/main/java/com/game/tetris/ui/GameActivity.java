@@ -460,6 +460,11 @@ public class GameActivity extends BaseActivity implements GameVu {
     }
 
     @Override
+    public void startPlayLevelMusic() {
+        musicTool.playLevelMusic(this);
+    }
+
+    @Override
     protected void onRestart() {
         super.onRestart();
 //        myMusicService.restoreMusic();

@@ -70,4 +70,6 @@ public interface GameVu {
     String getWannaTryAgain();
 
     void playWinMusic();
+
+    void startPlayLevelMusic();
 }

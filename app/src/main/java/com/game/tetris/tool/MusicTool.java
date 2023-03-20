@@ -10,7 +10,7 @@ import android.os.Build;
 import com.game.tetris.battle.R;
 
 public class MusicTool {
-    private MediaPlayer soundBackgroundPlayer,soundWinPlayer;
+    private MediaPlayer soundBackgroundPlayer,soundWinPlayer,soundLevelPlayer;
 
     private SoundPool soundEffectPool,soundUpgradePool;
     private int effectSoundId,upgradeSoundId;
@@ -40,11 +40,20 @@ public class MusicTool {
 
     public void playSoundBackground(Activity activity) {
         if (soundBackgroundPlayer == null) {
-            soundBackgroundPlayer = MediaPlayer.create(activity, R.raw.game_music);
+            soundBackgroundPlayer = MediaPlayer.create(activity, R.raw.play_normal);
             soundBackgroundPlayer.setVolume(0.6f, 0.6f);
             soundBackgroundPlayer.setLooping(true);
         }
         soundBackgroundPlayer.start();
+    }
+
+    public void playLevelMusic(Activity activity){
+        if (soundLevelPlayer == null) {
+            soundLevelPlayer = MediaPlayer.create(activity, R.raw.level_music);
+            soundLevelPlayer.setVolume(0.6f, 0.6f);
+            soundLevelPlayer.setLooping(true);
+        }
+        soundLevelPlayer.start();
     }
 
 
@@ -70,6 +79,10 @@ public class MusicTool {
         if (soundWinPlayer != null){
             soundWinPlayer.release();
             soundWinPlayer = null;
+        }
+        if (soundLevelPlayer != null){
+            soundLevelPlayer.release();
+            soundLevelPlayer = null;
         }
     }
 

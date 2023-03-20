@@ -86,7 +86,12 @@ public class GamePresenterImpl implements GamePresenter {
         currentGameMode = mode;
 
         if (SharedPreferTool.getInstance().isActiveMusic()){
-            mView.startPlayBackgroundMusic();
+            if (currentGameMode == LEVEL_MODE){
+                mView.startPlayLevelMusic();
+            }else {
+                mView.startPlayBackgroundMusic();
+            }
+
         }
 
         if (currentGameMode == LEVEL_MODE){
