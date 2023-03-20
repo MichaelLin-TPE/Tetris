@@ -27,4 +27,5 @@
     <string name="level">LEVEL</string>
     <string name="traget">Target :</string>
     <string name="next_level">Next</string>
+    <string name="wanna_try_again">Wanna try again?</string>
 </resources>

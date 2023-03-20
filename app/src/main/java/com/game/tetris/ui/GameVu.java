@@ -66,4 +66,8 @@ public interface GameVu {
     void showTargetPoint(int targetPoint);
 
     void showWinLevelDialog();
+
+    String getWannaTryAgain();
+
+    void playWinMusic();
 }

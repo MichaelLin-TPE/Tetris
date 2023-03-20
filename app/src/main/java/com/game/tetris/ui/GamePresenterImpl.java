@@ -1404,14 +1404,18 @@ public class GamePresenterImpl implements GamePresenter {
             if (isGameOver) {
                 MichaelLog.i("game over");
                 mView.getHandler().removeCallbacks(this);
-                if (SharedPreferTool.getInstance().getPoint() == 0) {
-                    mView.savePoint();
-                    mView.showGameOver(mView.getGameOverContentWithoutHistoryScore());
-                } else if (mView.getCurrentPoint() > SharedPreferTool.getInstance().getPoint()) {
-                    mView.savePoint();
-                    mView.showGameOver(mView.getGameOverContentWithHighScore());
-                } else {
-                    mView.showGameOver(mView.getGameOverContentWithHistoryScore());
+                if (currentGameMode == LEVEL_MODE){
+                    mView.showGameOver(mView.getWannaTryAgain());
+                }else {
+                    if (SharedPreferTool.getInstance().getPoint() == 0) {
+                        mView.savePoint();
+                        mView.showGameOver(mView.getGameOverContentWithoutHistoryScore());
+                    } else if (mView.getCurrentPoint() > SharedPreferTool.getInstance().getPoint()) {
+                        mView.savePoint();
+                        mView.showGameOver(mView.getGameOverContentWithHighScore());
+                    } else {
+                        mView.showGameOver(mView.getGameOverContentWithHistoryScore());
+                    }
                 }
                 return;
             }
@@ -1509,6 +1513,7 @@ public class GamePresenterImpl implements GamePresenter {
                 isFinish = true;
                 mView.getHandler().removeCallbacks(goingDownRunnable);
                 mView.showWinLevelDialog();
+                mView.playWinMusic();
                 SharedPreferTool.getInstance().setGameLevel(SharedPreferTool.getInstance().getGameLevel() + 1);
             }
         }

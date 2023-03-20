@@ -47,6 +47,7 @@ public class GameActivity extends BaseActivity implements GameVu {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        musicTool.initSoundPool(this);
         initPresenter();
         initView();
         int currentGameMode = getIntent().getExtras().getInt("mode",PRACTISE_MODE);
@@ -338,17 +339,17 @@ public class GameActivity extends BaseActivity implements GameVu {
 
     @Override
     public String getGameOverContentWithHistoryScore() {
-        return getString(R.string.game_over) + " " + tvPoint.getTag() + getString(R.string.highest_score) + " " + SharedPreferTool.getInstance().getPoint();
+        return getString(R.string.game_over) + " " + Tool.numberFormat((Integer) tvPoint.getTag()) + getString(R.string.highest_score) + " " + Tool.numberFormat(SharedPreferTool.getInstance().getPoint());
     }
 
     @Override
     public String getGameOverContentWithoutHistoryScore() {
-        return getString(R.string.game_over) + " " + tvPoint.getTag();
+        return getString(R.string.game_over) + " " + Tool.numberFormat((Integer) tvPoint.getTag());
     }
 
     @Override
     public String getGameOverContentWithHighScore() {
-        return getString(R.string.win_high_score) + " " + getCurrentPoint();
+        return getString(R.string.win_high_score) + " " + Tool.numberFormat(getCurrentPoint());
     }
 
     @Override
@@ -446,6 +447,16 @@ public class GameActivity extends BaseActivity implements GameVu {
                 presenter.onReplayClickListener();
             }
         });
+    }
+
+    @Override
+    public String getWannaTryAgain() {
+        return getString(R.string.wanna_try_again);
+    }
+
+    @Override
+    public void playWinMusic() {
+        musicTool.playSoundWin(this);
     }
 
     @Override
