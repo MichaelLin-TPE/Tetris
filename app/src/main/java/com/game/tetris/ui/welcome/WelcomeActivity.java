@@ -15,6 +15,8 @@ import com.game.tetris.dialog.DifficultyLevelDialog;
 import com.game.tetris.dialog.GameModeDialog;
 import com.game.tetris.dialog.SettingDialog;
 import com.game.tetris.ui.GameActivity;
+import com.github.javiersantos.appupdater.AppUpdater;
+import com.github.javiersantos.appupdater.enums.UpdateFrom;
 
 public class WelcomeActivity extends BaseActivity implements WelcomeVu {
 
@@ -29,6 +31,12 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
         initPresenter();
         initView();
         presenter.onCreate();
+
+        AppUpdater appUpdater = new AppUpdater(this)
+                .setUpdateFrom(UpdateFrom.GOOGLE_PLAY)
+                .setUpdateXML("https://play.google.com/store/apps/details?id=com.game.tetris.battle");
+        appUpdater.start();
+
     }
 
     private void initView() {
