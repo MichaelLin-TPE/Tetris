@@ -9,12 +9,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.game.tetris.MichaelLog;
 import com.game.tetris.base.BaseActivity;
 import com.game.tetris.battle.R;
 import com.game.tetris.dialog.DifficultyLevelDialog;
 import com.game.tetris.dialog.GameModeDialog;
 import com.game.tetris.dialog.SettingDialog;
 import com.game.tetris.ui.GameActivity;
+import com.github.javiersantos.appupdater.AppUpdater;
+import com.github.javiersantos.appupdater.AppUpdaterUtils;
+import com.github.javiersantos.appupdater.enums.AppUpdaterError;
+import com.github.javiersantos.appupdater.enums.UpdateFrom;
+import com.github.javiersantos.appupdater.objects.Update;
 
 public class WelcomeActivity extends BaseActivity implements WelcomeVu {
 
@@ -29,6 +35,22 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
         initPresenter();
         initView();
         presenter.onCreate();
+        AppUpdaterUtils updaterUtils = new AppUpdaterUtils(this)
+                .setUpdateFrom(UpdateFrom.JSON)
+                .setUpdateJSON("https://raw.githubusercontent.com/MichaelLin-TPE/Tetris/master/release_note.json")
+                .withListener(new AppUpdaterUtils.UpdateListener() {
+                    @Override
+                    public void onSuccess(Update update, Boolean isUpdateAvailable) {
+                        MichaelLog.i("version : "+update.getLatestVersion() + " version code : "+update.getLatestVersionCode());
+                        MichaelLog.i("release note : "+update.getReleaseNotes());
+                    }
+
+                    @Override
+                    public void onFailed(AppUpdaterError error) {
+                        MichaelLog.i("onFailed : "+error.toString());
+                    }
+                });
+        updaterUtils.start();
     }
 
     private void initView() {
