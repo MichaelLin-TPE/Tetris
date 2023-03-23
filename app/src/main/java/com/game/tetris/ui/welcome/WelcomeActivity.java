@@ -16,7 +16,6 @@ import com.game.tetris.dialog.DifficultyLevelDialog;
 import com.game.tetris.dialog.GameModeDialog;
 import com.game.tetris.dialog.SettingDialog;
 import com.game.tetris.ui.GameActivity;
-import com.github.javiersantos.appupdater.AppUpdater;
 import com.github.javiersantos.appupdater.AppUpdaterUtils;
 import com.github.javiersantos.appupdater.enums.AppUpdaterError;
 import com.github.javiersantos.appupdater.enums.UpdateFrom;
@@ -41,13 +40,13 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
                 .withListener(new AppUpdaterUtils.UpdateListener() {
                     @Override
                     public void onSuccess(Update update, Boolean isUpdateAvailable) {
-                        MichaelLog.i("version : "+update.getLatestVersion() + " version code : "+update.getLatestVersionCode());
-                        MichaelLog.i("release note : "+update.getReleaseNotes());
+                        MichaelLog.i("version : " + update.getLatestVersion() + " version code : " + update.getLatestVersionCode());
+                        MichaelLog.i("release note : " + update.getReleaseNotes());
                     }
 
                     @Override
                     public void onFailed(AppUpdaterError error) {
-                        MichaelLog.i("onFailed : "+error.toString());
+                        MichaelLog.i("onFailed : " + error.toString());
                     }
                 });
         updaterUtils.start();
@@ -106,7 +105,7 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
         tvTitle.animate()
                 .y(menuView.getY() - tvTitle.getHeight())
                 .setDuration(500)
-                .withEndAction(()->presenter.onStartToShowMenu())
+                .withEndAction(() -> presenter.onStartToShowMenu())
                 .start();
     }
 
@@ -130,7 +129,7 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
     @Override
     public void goToGamePage(int mode) {
         Intent it = new Intent(this, GameActivity.class);
-        it.putExtra("mode",mode);
+        it.putExtra("mode", mode);
         startActivity(it);
     }
 
@@ -143,7 +142,7 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
     @Override
     public void showGameModeDialog() {
         GameModeDialog dialog = new GameModeDialog();
-        dialog.show(getSupportFragmentManager(),"dialog");
+        dialog.show(getSupportFragmentManager(), "dialog");
         dialog.setOnGameModeItemClickListener(new GameModeDialog.OnGameModeItemClickListener() {
             @Override
             public void onLevelStart() {
@@ -160,13 +159,13 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
 
     @Override
     public void showToast() {
-        Toast.makeText(this,getString(R.string.coming_soon),Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getString(R.string.coming_soon), Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void showDifficultyLeveDialog() {
         DifficultyLevelDialog dialog = new DifficultyLevelDialog();
-        dialog.show(getSupportFragmentManager(),"dialog");
+        dialog.show(getSupportFragmentManager(), "dialog");
         dialog.setOnDifficultyConfirmClickListener(new DifficultyLevelDialog.OnDifficultyConfirmClickListener() {
             @Override
             public void onConfirmClick() {
