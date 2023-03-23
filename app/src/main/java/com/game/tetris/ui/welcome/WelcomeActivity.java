@@ -1,6 +1,7 @@
 package com.game.tetris.ui.welcome;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -11,10 +12,12 @@ import android.widget.Toast;
 
 import com.game.tetris.MichaelLog;
 import com.game.tetris.base.BaseActivity;
+import com.game.tetris.battle.BuildConfig;
 import com.game.tetris.battle.R;
 import com.game.tetris.dialog.DifficultyLevelDialog;
 import com.game.tetris.dialog.GameModeDialog;
 import com.game.tetris.dialog.SettingDialog;
+import com.game.tetris.dialog.TetrisDialog;
 import com.game.tetris.ui.GameActivity;
 import com.github.javiersantos.appupdater.AppUpdaterUtils;
 import com.github.javiersantos.appupdater.enums.AppUpdaterError;
@@ -34,22 +37,6 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
         initPresenter();
         initView();
         presenter.onCreate();
-        AppUpdaterUtils updaterUtils = new AppUpdaterUtils(this)
-                .setUpdateFrom(UpdateFrom.JSON)
-                .setUpdateJSON("https://raw.githubusercontent.com/MichaelLin-TPE/Tetris/master/release_note.json")
-                .withListener(new AppUpdaterUtils.UpdateListener() {
-                    @Override
-                    public void onSuccess(Update update, Boolean isUpdateAvailable) {
-                        MichaelLog.i("version : " + update.getLatestVersion() + " version code : " + update.getLatestVersionCode());
-                        MichaelLog.i("release note : " + update.getReleaseNotes());
-                    }
-
-                    @Override
-                    public void onFailed(AppUpdaterError error) {
-                        MichaelLog.i("onFailed : " + error.toString());
-                    }
-                });
-        updaterUtils.start();
     }
 
     private void initView() {
@@ -172,5 +159,50 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
                 presenter.onConfirmGameLevelClickListener();
             }
         });
+    }
+
+    @Override
+    public void onCheckAppVersionUpdate() {
+        AppUpdaterUtils updaterUtils = new AppUpdaterUtils(this)
+                .setUpdateFrom(UpdateFrom.JSON)
+                .setUpdateJSON("https://raw.githubusercontent.com/MichaelLin-TPE/Tetris/master/release_note.json")
+                .withListener(new AppUpdaterUtils.UpdateListener() {
+                    @Override
+                    public void onSuccess(Update update, Boolean isUpdateAvailable) {
+                        MichaelLog.i("version : " + update.getLatestVersion() + " version code : " + update.getLatestVersionCode());
+                        MichaelLog.i("release note : " + update.getReleaseNotes());
+                        presenter.onCheckAppVersionListener(update);
+                    }
+
+                    @Override
+                    public void onFailed(AppUpdaterError error) {
+                        MichaelLog.i("onFailed : " + error.toString());
+                        presenter.onCheckUpdateFail();
+                    }
+                });
+        updaterUtils.start();
+    }
+
+    @Override
+    public void showUpdateDialog(Update update) {
+        String title = "New Update : \n"+update.getReleaseNotes();
+        showTetrisDialog(title, getString(R.string.next_time), getString(R.string.go_update), new TetrisDialog.OnTetrisDialogListener() {
+            @Override
+            public void onCancel() {
+                presenter.onNextTimeClickListener();
+            }
+
+            @Override
+            public void onPositiveButton() {
+                presenter.onGoUpdateClickListener();
+            }
+        });
+    }
+
+    @Override
+    public void goGooglePlayTetrisPage() {
+        String appPackageName = "com.game.tetris.battle";
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName));
+        startActivity(intent);
     }
 }

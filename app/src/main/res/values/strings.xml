@@ -28,4 +28,6 @@
     <string name="traget">Target :</string>
     <string name="next_level">Next</string>
     <string name="wanna_try_again">Wanna try again?</string>
+    <string name="next_time">Next time</string>
+    <string name="go_update">Go update</string>
 </resources>

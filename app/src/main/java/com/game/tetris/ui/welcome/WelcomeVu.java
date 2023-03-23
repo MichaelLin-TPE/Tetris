@@ -1,5 +1,7 @@
 package com.game.tetris.ui.welcome;
 
+import com.github.javiersantos.appupdater.objects.Update;
+
 public interface WelcomeVu {
     void startBreathAnimation();
 
@@ -22,4 +24,10 @@ public interface WelcomeVu {
     void showToast();
 
     void showDifficultyLeveDialog();
+
+    void onCheckAppVersionUpdate();
+
+    void showUpdateDialog(Update update);
+
+    void goGooglePlayTetrisPage();
 }

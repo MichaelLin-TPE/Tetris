@@ -15,17 +15,17 @@
         android:layout_height="200dp">
 
         <com.game.tetris.custom.IntroFontTextView
-            android:layout_marginTop="50sp"
+            android:layout_marginTop="40dp"
             android:id="@+id/title"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_width="0dp"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:layout_marginHorizontal="20dp"
             android:gravity="center"
             android:textColor="@color/white"
-            android:text="@string/game_over"
+            android:text="Detect new update\n1.xxxxxx\n2.xxxxxxx\n3.xxxxxxx"
             android:layout_height="wrap_content"/>
 
         <com.game.tetris.custom.IntroFontTextView
