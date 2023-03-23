@@ -36,8 +36,8 @@ public class WelcomeActivity extends BaseActivity implements WelcomeVu {
         initView();
         presenter.onCreate();
         AppUpdaterUtils updaterUtils = new AppUpdaterUtils(this)
-                .setUpdateFrom(UpdateFrom.GITHUB)
-                .setGitHubUserAndRepo("MichaelLin-TPE","Tetris")
+                .setUpdateFrom(UpdateFrom.JSON)
+                .setUpdateJSON("https://raw.githubusercontent.com/MichaelLin-TPE/Tetris/master/release_note.json")
                 .withListener(new AppUpdaterUtils.UpdateListener() {
                     @Override
                     public void onSuccess(Update update, Boolean isUpdateAvailable) {
