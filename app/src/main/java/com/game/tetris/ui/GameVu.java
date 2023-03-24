@@ -72,4 +72,8 @@ public interface GameVu {
     void playWinMusic();
 
     void startPlayLevelMusic();
+
+    void showCountDownTime(Long timeMillis);
+
+    void showCountDownTime(boolean isShow);
 }

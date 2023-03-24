@@ -35,7 +35,7 @@ public class GameActivity extends BaseActivity implements GameVu {
     private GamePresenter presenter;
     private ConstraintLayout gameView, rootView;
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private TextView tvPoint,tvTarget;
+    private TextView tvPoint,tvTarget,tvTimer;
     private View leftSupportLine, rightSupportLine;
     //    private Intent serviceIntent;
 //    private MyMusicService myMusicService;
@@ -77,7 +77,7 @@ public class GameActivity extends BaseActivity implements GameVu {
         tvPoint.setTag(0);
         gameView = findViewById(R.id.game_view);
         rootView = findViewById(R.id.root);
-
+        tvTimer = findViewById(R.id.timer);
 
         TextView tvTurn = findViewById(R.id.game_button);
         TextView ivLeft = findViewById(R.id.tv_left);
@@ -462,6 +462,16 @@ public class GameActivity extends BaseActivity implements GameVu {
     @Override
     public void startPlayLevelMusic() {
         musicTool.playLevelMusic(this);
+    }
+
+    @Override
+    public void showCountDownTime(Long timeMillis) {
+        tvTimer.setText(Tool.getTime(timeMillis));
+    }
+
+    @Override
+    public void showCountDownTime(boolean isShow) {
+        tvTimer.setVisibility(isShow ? View.VISIBLE : View.GONE);
     }
 
     @Override

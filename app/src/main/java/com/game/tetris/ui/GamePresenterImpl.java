@@ -50,9 +50,11 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -71,10 +73,13 @@ public class GamePresenterImpl implements GamePresenter {
     private long pressDownTimeMillis = 0, pressUpTimeMillis = 0;
     private Disposable disposableKeepMoving; //控制左右按鈕按壓後的TIMER
     private Disposable disposableCountingKeepPress;
+    private Disposable disposableCountingDown;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private boolean isActiveSupportLine = false,isFinish = false;
     private int currentPoint = 0;
     private int currentGameMode;
+    private static final long TWO_MINS = 120000;
+    private static final long ONE_MINS = 60000;
 
     public GamePresenterImpl(GameVu mView) {
         this.mView = mView;
@@ -91,13 +96,49 @@ public class GamePresenterImpl implements GamePresenter {
             }else {
                 mView.startPlayBackgroundMusic();
             }
-
         }
 
         if (currentGameMode == LEVEL_MODE){
             mView.showTargetPoint(getTargetPoint());
+            startCountingDownTime();
         }
+        mView.showCountDownTime(currentGameMode == LEVEL_MODE);
 
+    }
+
+    private void startCountingDownTime() {
+        long totalTime = TWO_MINS + (ONE_MINS * SharedPreferTool.getInstance().getGameLevel());
+
+        Observable.interval(1,TimeUnit.MILLISECONDS)
+                .take(totalTime)
+                .map(aLong -> totalTime - aLong)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Long>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        disposableCountingDown = d;
+                        compositeDisposable.add(disposableCountingDown);
+                    }
+
+                    @Override
+                    public void onNext(Long timeMillis) {
+                        mView.showCountDownTime(timeMillis);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        disposableCountingDown.dispose();
+                        mView.getHandler().removeCallbacks(goingDownRunnable);
+                        isFinish = true;
+                        mView.showGameOver(mView.getWannaTryAgain());
+                    }
+                });
     }
 
     private int getTargetPoint() {
@@ -786,6 +827,7 @@ public class GamePresenterImpl implements GamePresenter {
         mView.showTargetView(currentGameMode == LEVEL_MODE);
         if (currentGameMode == LEVEL_MODE){
             mView.showTargetPoint(getTargetPoint());
+            startCountingDownTime();
         }
         createCube();
     }
@@ -807,22 +849,6 @@ public class GamePresenterImpl implements GamePresenter {
 
     private void arrangeAllCube() {
         MichaelLog.i("arrangeAllCube");
-//        float y = 0f;
-//        for (CubeData cubeData : cubeDataList){
-//            MichaelLog.i("cube Y : "+cubeData.getY());
-//            if (y == 0f){
-//                y = cubeData.getY();
-//                continue;
-//            }
-//            if (Math.abs(y - cubeData.getY()) < 20){
-//                cubeData.setY(y);
-//                cubeData.getCubeView().setY(y);
-//            }else {
-//                y = cubeData.getY();
-//            }
-//        }
-
-
         for (CubeData cubeData : cubeDataList){
             for (CubeData data : cubeDataList){
                 if (cubeData.getY() == data.getY()){
@@ -1187,7 +1213,7 @@ public class GamePresenterImpl implements GamePresenter {
         createSupportCube();
 
         //此次產出的方塊往下降
-        makeCubeGoingDown();
+//        makeCubeGoingDown();
         //可以開始移動或是轉向
         isCanMoveOrTurnCube = true;
 

@@ -17,6 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TetrisProject">
         <activity
+            android:screenOrientation="portrait"
             android:name="com.game.tetris.ui.welcome.WelcomeActivity"
             android:exported="true"
             android:theme="@style/StartTheme">
@@ -29,6 +30,7 @@
         </activity>
         <service android:name="com.game.tetris.service.MyMusicService"/>
         <activity
+            android:screenOrientation="portrait"
             android:theme="@style/StartTheme"
             android:name="com.game.tetris.ui.GameActivity"
             android:exported="false">

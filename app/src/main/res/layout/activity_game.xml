@@ -63,6 +63,20 @@
 
 
     <com.game.tetris.custom.IntroFontTextView
+        android:id="@+id/timer"
+        android:layout_width="0dp"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="02:00"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/pre_view"
+        app:layout_constraintLeft_toLeftOf="@id/pre_view"
+        app:layout_constraintRight_toRightOf="@id/pre_view"/>
+
+
+    <com.game.tetris.custom.IntroFontTextView
         android:id="@+id/tv_right"
         android:layout_width="80dp"
         android:layout_height="80dp"

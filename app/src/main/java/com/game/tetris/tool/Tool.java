@@ -8,7 +8,10 @@ import com.game.tetris.application.MyApplication;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
+import java.util.SimpleTimeZone;
 
 public class Tool {
     public static int getDP(int dp){
@@ -48,5 +51,10 @@ public class Tool {
 
     private static Resources getResource(){
         return MyApplication.instance.getResources();
+    }
+
+    public static String getTime(Long timeMillis) {
+        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss",Locale.getDefault());
+        return sdf.format(new Date(timeMillis));
     }
 }
