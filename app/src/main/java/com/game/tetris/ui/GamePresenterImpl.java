@@ -34,6 +34,7 @@ import static com.game.tetris.tool.CubeTool.NORMAL_MODE_SPEED;
 import static com.game.tetris.tool.CubeTool.PRACTISE_MODE;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import com.game.tetris.MichaelLog;
 import com.game.tetris.battle.R;
@@ -997,6 +998,7 @@ public class GamePresenterImpl implements GamePresenter {
 
 
     private void changeWayOfL2Cube() {
+        MichaelLog.i("轉向");
         CubeData data = cubeTempList.get(1);
 
         if ((data.getCubeTurnWay() == CUBE_TURN_L2_WAY1 || data.getCubeTurnWay() == CUBE_TURN_L2_WAY3) && isCanL2TurnWay(data)) {
@@ -1031,12 +1033,14 @@ public class GamePresenterImpl implements GamePresenter {
         }
         boolean isOverRight = false;
         for (CubeData cubeData : cubeTempList) {
-            if (cubeData.getX() >= gameViewRightX) {
+            MichaelLog.i("cube X : "+cubeData.getX() + " rightX : "+gameViewRightX);
+            if (cubeData.getX() >= gameViewRightX || Math.abs(cubeData.getX() - gameViewRightX) < 10) {
                 isOverRight = true;
                 break;
             }
         }
         if (isOverRight) {
+            MichaelLog.i("超出右邊");
             if (cubeTempList.get(0).getCubeTurnWay() == CUBE_TURN_L2_WAY2) {
                 for (CubeData cubeData : cubeTempList) {
                     cubeData.getCubeView().setX(cubeData.getX() - latticeWidth * 2);
@@ -1598,8 +1602,8 @@ public class GamePresenterImpl implements GamePresenter {
 
 
     private int getRandomCuteType() {
-        return (int) (Math.random() * 7);
-//        return CUBE_TYPE_L1;
+//        return (int) (Math.random() * 7);
+        return CUBE_TYPE_L2;
     }
 
 }
