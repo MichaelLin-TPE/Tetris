@@ -1,9 +1,9 @@
 {
-  "latestVersion": "1.0.3",
-  "latestVersionCode": 7,
+  "latestVersion": "1.0.4",
+  "latestVersionCode": 8,
   "url": "https://github.com/MichaelLin-TPE/Tetris/releases",
   "releaseNotes": [
-    "- 新增闖關模式",
+    "- 新增倒數計時模式",
     "- 優化遊玩體驗"
   ]
 }
