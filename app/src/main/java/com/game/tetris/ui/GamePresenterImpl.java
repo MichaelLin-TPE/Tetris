@@ -1217,7 +1217,7 @@ public class GamePresenterImpl implements GamePresenter {
         createSupportCube();
 
         //此次產出的方塊往下降
-//        makeCubeGoingDown();
+        makeCubeGoingDown();
         //可以開始移動或是轉向
         isCanMoveOrTurnCube = true;
 
@@ -1602,8 +1602,8 @@ public class GamePresenterImpl implements GamePresenter {
 
 
     private int getRandomCuteType() {
-//        return (int) (Math.random() * 7);
-        return CUBE_TYPE_L2;
+        return (int) (Math.random() * 7);
+//        return CUBE_TYPE_L2;
     }
 
 }
