@@ -29,9 +29,13 @@ public class Tool {
     }
 
     public static float convertDoubleWithTwoPercent(float value){
-        DecimalFormat format = new DecimalFormat("#.##");
-        format.setRoundingMode(RoundingMode.DOWN);
-        return Float.parseFloat(format.format(value));
+        try {
+            DecimalFormat format = new DecimalFormat("#.##");
+            format.setRoundingMode(RoundingMode.DOWN);
+            return Float.parseFloat(format.format(value));
+        }catch (Exception e){
+            throw new RuntimeException("convertDoubleWithTwoPercent value : "+value);
+        }
     }
 
     public static float convertDoubleWithOnePercent(float value){

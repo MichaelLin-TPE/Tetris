@@ -222,23 +222,29 @@ public class GameActivity extends BaseActivity implements GameVu {
 
     @Override
     public void showGameOver(String title) {
-        if (isDestroyed()) {
+        if (isDestroyed() || isFinishing()) {
             return;
         }
-        GameOverDialog dialog = new GameOverDialog();
-        dialog.setTitle(title);
-        dialog.show(getSupportFragmentManager(), "dialog");
-        dialog.setOnGameOverDialogListener(new GameOverDialog.OnGameOverDialogListener() {
-            @Override
-            public void onRePlayClick() {
-                presenter.onReplayClickListener();
-            }
+        //先暫時這樣處理
+        try {
+            GameOverDialog dialog = new GameOverDialog();
+            dialog.setTitle(title);
+            dialog.show(getSupportFragmentManager(), "dialog");
+            dialog.setOnGameOverDialogListener(new GameOverDialog.OnGameOverDialogListener() {
+                @Override
+                public void onRePlayClick() {
+                    presenter.onReplayClickListener();
+                }
 
-            @Override
-            public void onExitClick() {
-                presenter.onExitClickListener();
-            }
-        });
+                @Override
+                public void onExitClick() {
+                    presenter.onExitClickListener();
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
 
     }
 
