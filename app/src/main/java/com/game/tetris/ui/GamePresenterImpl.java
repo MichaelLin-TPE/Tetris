@@ -777,6 +777,7 @@ public class GamePresenterImpl implements GamePresenter {
 
     @Override
     public void onDestroy() {
+        isFinish = true;
         compositeDisposable.dispose();
         mView.getHandler().removeCallbacks(goingDownRunnable);
     }
@@ -1215,7 +1216,7 @@ public class GamePresenterImpl implements GamePresenter {
         createSupportCube();
 
         //此次產出的方塊往下降
-//        makeCubeGoingDown();
+        makeCubeGoingDown();
         //可以開始移動或是轉向
         isCanMoveOrTurnCube = true;
 
@@ -1408,6 +1409,10 @@ public class GamePresenterImpl implements GamePresenter {
     private final Runnable goingDownRunnable = new Runnable() {
         @Override
         public void run() {
+            if (isFinish) {
+                mView.getHandler().removeCallbacks(this);
+                return;
+            }
             boolean isReachBottom = false;
             int index = 0;
 //            printAllXY();
@@ -1450,9 +1455,6 @@ public class GamePresenterImpl implements GamePresenter {
                         mView.showGameOver(mView.getGameOverContentWithHistoryScore());
                     }
                 }
-                return;
-            }
-            if (isFinish) {
                 return;
             }
             mView.getHandler().removeCallbacks(this);
@@ -1599,8 +1601,8 @@ public class GamePresenterImpl implements GamePresenter {
 
 
     private int getRandomCuteType() {
-//        return (int) (Math.random() * 7);
-        return CUBE_TYPE_L1;
+        return (int) (Math.random() * 7);
+//        return CUBE_TYPE_L2;
     }
 
 }

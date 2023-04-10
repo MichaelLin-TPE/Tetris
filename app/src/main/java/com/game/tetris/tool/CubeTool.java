@@ -463,7 +463,12 @@ public class CubeTool {
         }
         CubeData data = cubeTempList.get(3);
         data.setCubeTurnWay(CUBE_TURN_L1_WAY4);
-        if (isHoldLeft){
+
+        if (!isHoldLeft && !isHoldRight) {
+            Log.i("Michael", "兩邊都沒靠邊");
+            data.setX(data.getX() + latticeWidth);
+            data.getCubeView().setX(data.getX());
+        } else if (isHoldLeft){
             data.setX(data.getX() + latticeWidth);
             data.getCubeView().setX(data.getX());
         }
